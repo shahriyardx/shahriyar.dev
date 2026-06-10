@@ -1,3 +1,4 @@
+import { Toaster } from "sonner"
 import {
   SidebarProvider,
   SidebarTrigger,
@@ -21,6 +22,7 @@ export default function DashboardLayout({
         </header>
         {children}
       </SidebarInset>
+      <Toaster position="bottom-right" />
     </SidebarProvider>
   )
 }

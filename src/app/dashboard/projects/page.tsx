@@ -3,14 +3,26 @@
 import Link from "next/link"
 import { FolderOpen, PencilSimple, Plus, Trash } from "@phosphor-icons/react"
 import { trpc } from "@/lib/trpc/client"
+import { toast } from "sonner"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 
 export default function ProjectsPage() {
   const utils = trpc.useUtils()
   const { data: projects = [] } = trpc.project.list.useQuery()
   const deleteProject = trpc.project.delete.useMutation({
-    onSuccess: () => utils.project.list.invalidate(),
+    onSuccess: () => {
+      toast.success("Project deleted")
+      utils.project.list.invalidate()
+    },
+    onError: () => toast.error("Failed to delete project"),
   })
 
   return (
@@ -52,22 +64,23 @@ export default function ProjectsPage() {
 
       <div className="grid gap-4">
         {projects.map((project) => (
-          <div
-            key={project.id}
-            className="flex items-start justify-between border p-4"
-          >
-            <div className="flex flex-col gap-2">
+          <Card key={project.id}>
+            <CardHeader>
               <div className="flex items-center gap-3">
-                <span className="font-medium">{project.title}</span>
+                <CardTitle className="text-base">{project.title}</CardTitle>
                 {!project.published && (
                   <Badge variant="outline" className="text-xs">
                     Draft
                   </Badge>
                 )}
               </div>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-3">
               <p className="text-sm text-muted-foreground">
                 {project.description}
               </p>
+            </CardContent>
+            <CardFooter className="flex items-center justify-between gap-1">
               {project.tags.length > 0 && (
                 <div className="flex flex-wrap gap-1.5">
                   {project.tags.map((tag) => (
@@ -77,23 +90,23 @@ export default function ProjectsPage() {
                   ))}
                 </div>
               )}
-            </div>
-            <div className="flex items-center gap-1">
-              <Button variant="ghost" size="icon" asChild>
-                <Link href={`/dashboard/projects/${project.id}/edit`}>
-                  <PencilSimple size={14} />
-                </Link>
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => deleteProject.mutate({ id: project.id })}
-                disabled={deleteProject.isPending}
-              >
-                <Trash size={14} />
-              </Button>
-            </div>
-          </div>
+              <div className="flex items-center gap-1 ml-auto">
+                <Button variant="outline" size="icon" asChild>
+                  <Link href={`/dashboard/projects/${project.id}/edit`}>
+                    <PencilSimple size={14} />
+                  </Link>
+                </Button>
+                <Button
+                  variant="destructive"
+                  size="icon"
+                  onClick={() => deleteProject.mutate({ id: project.id })}
+                  disabled={deleteProject.isPending}
+                >
+                  <Trash size={14} />
+                </Button>
+              </div>
+            </CardFooter>
+          </Card>
         ))}
       </div>
     </div>

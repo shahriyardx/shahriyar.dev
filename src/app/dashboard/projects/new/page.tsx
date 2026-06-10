@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation"
 import { trpc } from "@/lib/trpc/client"
 import { ProjectForm, type projectFormSchema } from "@/components/project-form"
+import { toast } from "sonner"
 import type { z } from "zod"
 import {
   Breadcrumb,
@@ -20,9 +21,11 @@ export default function NewProjectPage() {
   const utils = trpc.useUtils()
   const createProject = trpc.project.create.useMutation({
     onSuccess: () => {
+      toast.success("Project created")
       utils.project.list.invalidate()
       router.push("/dashboard/projects")
     },
+    onError: () => toast.error("Failed to create project"),
   })
 
   const onSubmit = (data: ProjectFormData) => {

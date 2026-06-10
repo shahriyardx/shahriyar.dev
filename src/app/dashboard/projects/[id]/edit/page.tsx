@@ -3,6 +3,7 @@
 import { useParams, useRouter } from "next/navigation"
 import { trpc } from "@/lib/trpc/client"
 import { ProjectForm, type projectFormSchema } from "@/components/project-form"
+import { toast } from "sonner"
 import type { z } from "zod"
 import {
   Breadcrumb,
@@ -24,9 +25,11 @@ export default function EditProjectPage() {
 
   const updateProject = trpc.project.update.useMutation({
     onSuccess: () => {
+      toast.success("Project updated")
       utils.project.list.invalidate()
       router.push("/dashboard/projects")
     },
+    onError: () => toast.error("Failed to update project"),
   })
 
   if (!project)

@@ -12,12 +12,13 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar"
-import { FolderOpen, House } from "@phosphor-icons/react"
+import { FileText, FolderOpen, House } from "@phosphor-icons/react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
 const navItems = [
   { title: "Home", url: "/", icon: House },
+  { title: "Blog", url: "/dashboard/blog", icon: FileText },
   { title: "Projects", url: "/dashboard/projects", icon: FolderOpen },
 ]
 
