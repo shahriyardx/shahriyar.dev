@@ -9,6 +9,26 @@ export const metadata: Metadata = {
   description: "Web developer resume",
 }
 
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <section>
+      <div className="mb-4 flex items-center gap-3">
+        <h2 className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">{title}</h2>
+        <div className="h-px flex-1 bg-border" />
+      </div>
+      {children}
+    </section>
+  )
+}
+
+function Tag({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="inline-flex items-center rounded-sm border bg-muted/30 px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
+      {children}
+    </span>
+  )
+}
+
 export default async function ResumePage() {
   const { name, phone, email, title, website, skills, languages, technologies, experience, courses } = resumeData
   const projects = await prisma.project.findMany({
@@ -17,22 +37,22 @@ export default async function ResumePage() {
   })
 
   return (
-    <div className="mx-auto max-w-4xl px-6 pt-28 pb-20">
-      <div className="mb-8 flex items-start justify-between">
+    <div className="mx-auto max-w-3xl px-6 pt-28 pb-20">
+      <div className="mb-10 flex items-start justify-between">
         <div>
-          <h1 className="text-3xl font-black tracking-tight md:text-4xl">{name}</h1>
-          <p className="mt-1 text-lg text-muted-foreground">{title}</p>
-          <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
-            <span className="flex items-center gap-1.5">
-              <Icon name="Phone" size={13} />
+          <h1 className="text-4xl font-black tracking-tight">{name}</h1>
+          <p className="mt-1.5 text-base text-muted-foreground">{title}</p>
+          <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-1.5 text-xs text-muted-foreground">
+            <a href={`tel:${phone}`} className="flex items-center gap-1.5 transition-colors hover:text-foreground">
+              <Icon name="Phone" size={11} />
               {phone}
-            </span>
+            </a>
             <a href={`mailto:${email}`} className="flex items-center gap-1.5 transition-colors hover:text-foreground">
-              <Icon name="Envelope" size={13} />
+              <Icon name="Envelope" size={11} />
               {email}
             </a>
             <a href={`https://${website}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 transition-colors hover:text-foreground">
-              <Icon name="Globe" size={13} />
+              <Icon name="Globe" size={11} />
               {website}
             </a>
           </div>
@@ -40,70 +60,58 @@ export default async function ResumePage() {
         <ResumeDownload />
       </div>
 
-      <div id="resume-content" className="flex flex-col gap-10">
-        <section>
-          <h2 className="mb-3 text-lg font-semibold tracking-tight">Skills</h2>
-          <div className="flex flex-wrap gap-2">
-            {skills.map((s) => (
-              <span key={s} className="border px-3 py-1 text-sm">{s}</span>
-            ))}
+      <div id="resume-content" className="flex flex-col gap-8">
+        <Section title="Skills">
+          <div className="flex flex-wrap gap-1.5">
+            {skills.map((s) => <Tag key={s}>{s}</Tag>)}
           </div>
-        </section>
+        </Section>
 
-        <section>
-          <h2 className="mb-3 text-lg font-semibold tracking-tight">Languages</h2>
-          <div className="flex flex-wrap gap-2">
-            {languages.map((l) => (
-              <span key={l} className="border px-3 py-1 text-sm">{l}</span>
-            ))}
+        <Section title="Languages">
+          <div className="flex flex-wrap gap-1.5">
+            {languages.map((l) => <Tag key={l}>{l}</Tag>)}
           </div>
-        </section>
+        </Section>
 
-        <section>
-          <h2 className="mb-3 text-lg font-semibold tracking-tight">Technologies</h2>
-          <div className="flex flex-wrap gap-2">
-            {technologies.map((t) => (
-              <span key={t} className="border px-3 py-1 text-sm">{t}</span>
-            ))}
+        <Section title="Technologies">
+          <div className="flex flex-wrap gap-1.5">
+            {technologies.map((t) => <Tag key={t}>{t}</Tag>)}
           </div>
-        </section>
+        </Section>
 
         {projects.length > 0 && (
-          <section>
-            <h2 className="mb-4 text-lg font-semibold tracking-tight">Projects</h2>
-            <div className="flex flex-col gap-6">
+          <Section title="Projects">
+            <div className="flex flex-col gap-5">
               {projects.map((p) => (
                 <div key={p.id}>
-                  <h3 className="font-semibold">{p.title}</h3>
-                  <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{p.description}</p>
-                  {p.url && (
-                    <div className="mt-1.5 flex items-center gap-3 text-sm">
-                      <a href={p.url} target="_blank" rel="noopener noreferrer" className="text-muted-foreground underline underline-offset-2 transition-colors hover:text-foreground">
-                        Live Site
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-semibold">{p.title}</h3>
+                    {p.url && (
+                      <a href={p.url} target="_blank" rel="noopener noreferrer" className="text-xs text-muted-foreground underline underline-offset-2 transition-colors hover:text-foreground">
+                        Live Site &rarr;
                       </a>
-                    </div>
-                  )}
+                    )}
+                  </div>
+                  <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{p.description}</p>
                 </div>
               ))}
             </div>
-          </section>
+          </Section>
         )}
 
-        <section>
-          <h2 className="mb-4 text-lg font-semibold tracking-tight">Experience</h2>
+        <Section title="Experience">
           <div className="flex flex-col gap-6">
             {experience.map((exp, i) => (
               <div key={i}>
-                <div className="flex flex-col gap-1">
+                <div className="flex flex-col gap-0.5">
                   <div className="flex items-start justify-between gap-4">
-                    <h3 className="font-semibold">{exp.company}</h3>
-                    <span className="shrink-0 text-sm text-muted-foreground">
+                    <h3 className="font-semibold">{exp.role}</h3>
+                    <span className="shrink-0 text-xs text-muted-foreground">
                       {exp.startDate} — {exp.endDate ?? "Present"}
                     </span>
                   </div>
-                  <p className="text-sm text-muted-foreground">{exp.address}</p>
                   <p className="text-sm text-muted-foreground">
-                    <span className="text-foreground">Position:</span> {exp.role}
+                    {exp.company} — {exp.address}
                   </p>
                 </div>
                 <ul className="mt-2 flex flex-col gap-1">
@@ -117,25 +125,24 @@ export default async function ResumePage() {
               </div>
             ))}
           </div>
-        </section>
+        </Section>
 
-        <section>
-          <h2 className="mb-4 text-lg font-semibold tracking-tight">Courses</h2>
+        <Section title="Courses">
           <div className="flex flex-col gap-4">
             {courses.map((c, i) => (
               <div key={i} className="flex items-start justify-between gap-4">
                 <div>
-                  <h3 className="font-semibold">{c.name}</h3>
-                  <p className="text-sm text-muted-foreground">{c.institution}</p>
+                  <h3 className="text-sm font-semibold">{c.name}</h3>
+                  <p className="text-xs text-muted-foreground">{c.institution}</p>
                 </div>
-                <div className="shrink-0 text-right text-sm text-muted-foreground">
+                <div className="shrink-0 text-right text-xs text-muted-foreground">
                   <p>{c.type}</p>
                   <p>{c.startDate} — {c.endDate}</p>
                 </div>
               </div>
             ))}
           </div>
-        </section>
+        </Section>
       </div>
     </div>
   )
