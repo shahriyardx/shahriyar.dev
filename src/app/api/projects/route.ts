@@ -12,7 +12,8 @@ export async function GET() {
 
 export async function POST(request: Request) {
   const session = await auth.api.getSession({ headers: await headers() })
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  if (!session)
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
   const body = await request.json()
   const project = await prisma.project.create({

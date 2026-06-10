@@ -4,12 +4,7 @@ import { ArrowUpRight, Code } from "@phosphor-icons/react"
 import { trpc } from "@/lib/trpc/client"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card"
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Section, SectionLabel } from "@/components/section"
 
 export function FeaturedProjects() {
@@ -53,7 +48,12 @@ export function FeaturedProjects() {
                   </Badge>
                 ))}
               </div>
-              <Button variant="ghost" size="sm" asChild className="gap-1 shrink-0">
+              <Button
+                variant="ghost"
+                size="sm"
+                asChild
+                className="gap-1 shrink-0"
+              >
                 <a href={project.url} target="_blank" rel="noopener noreferrer">
                   Live site <ArrowUpRight size={14} />
                 </a>
@@ -62,7 +62,6 @@ export function FeaturedProjects() {
           </Card>
         ))}
       </div>
-
     </Section>
   )
 }

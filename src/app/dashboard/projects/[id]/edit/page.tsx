@@ -1,6 +1,6 @@
 "use client"
 
-import { useRouter } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 import { trpc } from "@/lib/trpc/client"
 import { ProjectForm, type projectFormSchema } from "@/components/project-form"
 import type { z } from "zod"
@@ -15,18 +15,29 @@ import {
 
 type ProjectFormData = z.infer<typeof projectFormSchema>
 
-export default function NewProjectPage() {
+export default function EditProjectPage() {
+  const { id } = useParams() as { id: string }
   const router = useRouter()
   const utils = trpc.useUtils()
-  const createProject = trpc.project.create.useMutation({
+  const { data: projects } = trpc.project.list.useQuery()
+  const project = projects?.find((p) => p.id === id)
+
+  const updateProject = trpc.project.update.useMutation({
     onSuccess: () => {
       utils.project.list.invalidate()
       router.push("/dashboard/projects")
     },
   })
 
+  if (!project)
+    return (
+      <div className="p-6 text-sm text-muted-foreground">
+        Project not found.
+      </div>
+    )
+
   const onSubmit = (data: ProjectFormData) => {
-    createProject.mutate(data)
+    updateProject.mutate({ id, ...data })
   }
 
   return (
@@ -38,23 +49,29 @@ export default function NewProjectPage() {
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbPage>New Project</BreadcrumbPage>
+            <BreadcrumbPage>Edit</BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
 
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">New Project</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Edit Project</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Add a new project to your portfolio.
+          Update &ldquo;{project.title}&rdquo;
         </p>
       </div>
 
       <div className="max-w-lg">
         <ProjectForm
+          defaultValues={{
+            title: project.title,
+            description: project.description,
+            url: project.url,
+            tags: project.tags,
+          }}
           onSubmit={onSubmit}
-          isPending={createProject.isPending}
-          submitLabel="Create Project"
+          isPending={updateProject.isPending}
+          submitLabel="Update Project"
         />
       </div>
     </div>

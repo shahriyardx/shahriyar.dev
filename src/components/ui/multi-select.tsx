@@ -79,7 +79,7 @@ export function MultiSelect({
   }
 
   const onItemAdded = useCallback((value: string, label: ReactNode) => {
-    setItems(prev => {
+    setItems((prev) => {
       if (prev.get(value) === label) return prev
       return new Map(prev).set(value, label)
     })
@@ -164,7 +164,7 @@ export function MultiSelectValue({
     )
 
     if (overflowElement != null) overflowElement.style.display = "none"
-    items.forEach(child => child.style.removeProperty("display"))
+    items.forEach((child) => child.style.removeProperty("display"))
     let amount = 0
     for (let i = items.length - 1; i >= 0; i--) {
       const child = items[i]!
@@ -228,8 +228,8 @@ export function MultiSelectValue({
       )}
     >
       {[...selectedValues]
-        .filter(value => items.has(value))
-        .map(value => (
+        .filter((value) => items.has(value))
+        .map((value) => (
           <Badge
             variant="outline"
             data-selected-item
@@ -237,7 +237,7 @@ export function MultiSelectValue({
             key={value}
             onClick={
               clickToRemove
-                ? e => {
+                ? (e) => {
                     e.stopPropagation()
                     toggleValue(value)
                   }

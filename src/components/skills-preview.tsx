@@ -25,24 +25,25 @@ import {
 } from "@/components/ui/tooltip"
 import { Section, SectionLabel } from "@/components/section"
 
-const skills: { name: string; icon: React.ComponentType<{ size?: number }> }[] = [
-  { name: "React", icon: SiReact },
-  { name: "Next.js", icon: SiNextdotjs },
-  { name: "TypeScript", icon: SiTypescript },
-  { name: "JavaScript", icon: SiJavascript },
-  { name: "Node.js", icon: SiNodedotjs },
-  { name: "Python", icon: SiPython },
-  { name: "PostgreSQL", icon: SiPostgresql },
-  { name: "MongoDB", icon: SiMongodb },
-  { name: "Docker", icon: SiDocker },
-  { name: "Redis", icon: SiRedis },
-  { name: "Prisma", icon: SiPrisma },
-  { name: "GraphQL", icon: SiGraphql },
-  { name: "Tailwind CSS", icon: SiTailwindcss },
-  { name: "Linux", icon: SiLinux },
-  { name: "Git", icon: SiGit },
-  { name: "NGINX", icon: SiNginx },
-]
+const skills: { name: string; icon: React.ComponentType<{ size?: number }> }[] =
+  [
+    { name: "React", icon: SiReact },
+    { name: "Next.js", icon: SiNextdotjs },
+    { name: "TypeScript", icon: SiTypescript },
+    { name: "JavaScript", icon: SiJavascript },
+    { name: "Node.js", icon: SiNodedotjs },
+    { name: "Python", icon: SiPython },
+    { name: "PostgreSQL", icon: SiPostgresql },
+    { name: "MongoDB", icon: SiMongodb },
+    { name: "Docker", icon: SiDocker },
+    { name: "Redis", icon: SiRedis },
+    { name: "Prisma", icon: SiPrisma },
+    { name: "GraphQL", icon: SiGraphql },
+    { name: "Tailwind CSS", icon: SiTailwindcss },
+    { name: "Linux", icon: SiLinux },
+    { name: "Git", icon: SiGit },
+    { name: "NGINX", icon: SiNginx },
+  ]
 
 export function SkillsPreview() {
   return (

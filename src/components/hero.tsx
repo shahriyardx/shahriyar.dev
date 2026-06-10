@@ -36,7 +36,6 @@ export function Hero() {
             <Link href="/contact">Get in touch</Link>
           </Button>
         </div>
-
       </div>
     </Section>
   )

@@ -18,21 +18,18 @@ export function About() {
           </h2>
           <p className="text-muted-foreground leading-relaxed">
             I&apos;m a full-stack developer with deep experience in React,
-            Next.js, and modern TypeScript ecosystems. I focus on building
-            fast, accessible, and maintainable web applications.
+            Next.js, and modern TypeScript ecosystems. I focus on building fast,
+            accessible, and maintainable web applications.
           </p>
           <p className="text-muted-foreground leading-relaxed">
-            When I&apos;m not coding, I explore new technologies, contribute
-            to open source, and write about what I learn.
+            When I&apos;m not coding, I explore new technologies, contribute to
+            open source, and write about what I learn.
           </p>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           {highlights.map((h) => (
-            <div
-              key={h.label}
-              className="flex flex-col gap-1 border p-5"
-            >
+            <div key={h.label} className="flex flex-col gap-1 border p-5">
               <span className="text-3xl font-bold">{h.value}</span>
               <span className="text-xs text-muted-foreground">{h.label}</span>
             </div>

@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { FolderOpen, Plus, Trash } from "@phosphor-icons/react"
+import { FolderOpen, PencilSimple, Plus, Trash } from "@phosphor-icons/react"
 import { trpc } from "@/lib/trpc/client"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -52,15 +52,22 @@ export default function ProjectsPage() {
 
       <div className="grid gap-4">
         {projects.map((project) => (
-          <div key={project.id} className="flex items-start justify-between border p-4">
+          <div
+            key={project.id}
+            className="flex items-start justify-between border p-4"
+          >
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-3">
                 <span className="font-medium">{project.title}</span>
                 {!project.published && (
-                  <Badge variant="outline" className="text-xs">Draft</Badge>
+                  <Badge variant="outline" className="text-xs">
+                    Draft
+                  </Badge>
                 )}
               </div>
-              <p className="text-sm text-muted-foreground">{project.description}</p>
+              <p className="text-sm text-muted-foreground">
+                {project.description}
+              </p>
               {project.tags.length > 0 && (
                 <div className="flex flex-wrap gap-1.5">
                   {project.tags.map((tag) => (
@@ -71,14 +78,21 @@ export default function ProjectsPage() {
                 </div>
               )}
             </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => deleteProject.mutate({ id: project.id })}
-              disabled={deleteProject.isPending}
-            >
-              <Trash size={14} />
-            </Button>
+            <div className="flex items-center gap-1">
+              <Button variant="ghost" size="icon" asChild>
+                <Link href={`/dashboard/projects/${project.id}/edit`}>
+                  <PencilSimple size={14} />
+                </Link>
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => deleteProject.mutate({ id: project.id })}
+                disabled={deleteProject.isPending}
+              >
+                <Trash size={14} />
+              </Button>
+            </div>
           </div>
         ))}
       </div>

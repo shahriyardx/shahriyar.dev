@@ -21,14 +21,45 @@ import {
 } from "@/components/ui/multi-select"
 
 const TAGS = [
-  "React", "Next.js", "TypeScript", "JavaScript", "Node.js",
-  "Python", "PostgreSQL", "MongoDB", "Docker", "Redis",
-  "Prisma", "GraphQL", "Tailwind CSS", "Linux", "Git",
-  "NGINX", "Discord", "Stripe", "AWS", "Vercel",
-  "Figma", "Biome", "Bun", "Storybook", "Playwright",
-  "Radix UI", "Framer Motion", "CSS", "HTML", "Express",
-  "WebSocket", "D3.js", "Sanity", "Kafka", "RabbitMQ",
-  "Firebase", "Cloudflare", "React Native", "Electron",
+  "React",
+  "Next.js",
+  "TypeScript",
+  "JavaScript",
+  "Node.js",
+  "Python",
+  "PostgreSQL",
+  "MongoDB",
+  "Docker",
+  "Redis",
+  "Prisma",
+  "GraphQL",
+  "Tailwind CSS",
+  "Linux",
+  "Git",
+  "NGINX",
+  "Discord",
+  "Stripe",
+  "AWS",
+  "Vercel",
+  "Figma",
+  "Biome",
+  "Bun",
+  "Storybook",
+  "Playwright",
+  "Radix UI",
+  "Framer Motion",
+  "CSS",
+  "HTML",
+  "Express",
+  "WebSocket",
+  "D3.js",
+  "Sanity",
+  "Kafka",
+  "RabbitMQ",
+  "Firebase",
+  "Cloudflare",
+  "React Native",
+  "Electron",
 ] as const
 
 export const projectFormSchema = z.object({
@@ -59,7 +90,10 @@ export function ProjectForm({
   })
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-6">
+    <form
+      onSubmit={form.handleSubmit(onSubmit)}
+      className="flex flex-col gap-6"
+    >
       <Controller
         name="title"
         control={form.control}
@@ -119,14 +153,13 @@ export function ProjectForm({
         render={({ field, fieldState }) => (
           <Field data-invalid={fieldState.invalid}>
             <FieldLabel htmlFor={field.name}>Tags</FieldLabel>
-            <MultiSelect
-              values={field.value}
-              onValuesChange={field.onChange}
-            >
+            <MultiSelect values={field.value} onValuesChange={field.onChange}>
               <MultiSelectTrigger className="w-full">
                 <MultiSelectValue placeholder="Select technologies" />
               </MultiSelectTrigger>
-              <MultiSelectContent search={{ placeholder: "Search technologies..." }}>
+              <MultiSelectContent
+                search={{ placeholder: "Search technologies..." }}
+              >
                 {TAGS.map((tag) => (
                   <MultiSelectItem key={tag} value={tag}>
                     {tag}
@@ -134,7 +167,9 @@ export function ProjectForm({
                 ))}
               </MultiSelectContent>
             </MultiSelect>
-            <FieldDescription>Select the technologies used in this project.</FieldDescription>
+            <FieldDescription>
+              Select the technologies used in this project.
+            </FieldDescription>
             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </Field>
         )}
