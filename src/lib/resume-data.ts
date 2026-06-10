@@ -15,13 +15,6 @@ export interface Course {
   endDate: string
 }
 
-export interface Project {
-  name: string
-  description: string
-  liveUrl?: string
-  repoUrl?: string
-}
-
 export interface ResumeData {
   name: string
   phone: string
@@ -31,7 +24,6 @@ export interface ResumeData {
   skills: string[]
   languages: string[]
   technologies: string[]
-  projects: Project[]
   experience: Experience[]
   courses: Course[]
 }
@@ -52,28 +44,6 @@ export const resumeData: ResumeData = {
     "GitHub", "MongoDB", "Prisma", "Linux", "REST API", "Docker",
     "NGINX", "Cloud Computing", "Vercel", "Netlify", "Firebase",
     "Stripe", "Figma",
-  ],
-  projects: [
-    {
-      name: "Slash Commands",
-      description:
-        "Create slash commands for your Discord server using a dashboard UI. Highly customizable commands with built-in functions, high-level programming support using Python, multi-server management, and premium features through Stripe.",
-      liveUrl: "https://shahriyar.dev",
-    },
-    {
-      name: "Portfolio Builder",
-      description:
-        "Users can register and create their own professional portfolio. Anyone can view shared portfolios through a public link. Users can add projects, skills, experience, and contact information. Fully responsive across all devices.",
-      liveUrl: "https://shahriyar.dev",
-      repoUrl: "https://github.com/shahriyardx",
-    },
-    {
-      name: "Phorum",
-      description:
-        "A community discussion platform where users can create and reply to topics. AI moderation automatically checks for profanity on threads and replies. Real-time updates using Socket.io.",
-      liveUrl: "https://shahriyar.dev",
-      repoUrl: "https://github.com/shahriyardx",
-    },
   ],
   experience: [
     {
