@@ -1,8 +1,8 @@
 "use client"
 
-import { ArrowLeft, Envelope, MapPin, Globe, type IconProps } from "@phosphor-icons/react"
+import { ArrowLeft, Envelope, MapPin, Globe, Phone, type IconProps } from "@phosphor-icons/react"
 
-const icons = { ArrowLeft, Envelope, MapPin, Globe } as const
+const icons = { ArrowLeft, Envelope, MapPin, Globe, Phone } as const
 
 export function Icon({ name, ...props }: { name: keyof typeof icons } & IconProps) {
   const Component = icons[name]

@@ -5,20 +5,12 @@ import type { Metadata } from "next"
 
 export const metadata: Metadata = {
   title: "Resume — Shahriyar",
-  description: "Full-stack developer resume",
-}
-
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <section>
-      <h2 className="mb-4 text-lg font-semibold tracking-tight">{title}</h2>
-      {children}
-    </section>
-  )
+  description: "Web developer resume",
 }
 
 export default function ResumePage() {
-  const { name, title, summary, experience, education, skills, email, website, location } = resumeData
+  const { name, phone, email, title, website, skills, languages, technologies, projects, experience, courses } =
+    resumeData
 
   return (
     <div className="mx-auto max-w-4xl px-6 pt-28 pb-20">
@@ -27,15 +19,23 @@ export default function ResumePage() {
           <h1 className="text-3xl font-black tracking-tight md:text-4xl">{name}</h1>
           <p className="mt-1 text-lg text-muted-foreground">{title}</p>
           <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
-            <a href={`mailto:${email}`} className="flex items-center gap-1.5 transition-colors hover:text-foreground">
+            <span className="flex items-center gap-1.5">
+              <Icon name="Phone" size={13} />
+              {phone}
+            </span>
+            <a
+              href={`mailto:${email}`}
+              className="flex items-center gap-1.5 transition-colors hover:text-foreground"
+            >
               <Icon name="Envelope" size={13} />
               {email}
             </a>
-            <span className="flex items-center gap-1.5">
-              <Icon name="MapPin" size={13} />
-              {location}
-            </span>
-            <a href={`https://${website}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 transition-colors hover:text-foreground">
+            <a
+              href={`https://${website}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 transition-colors hover:text-foreground"
+            >
               <Icon name="Globe" size={13} />
               {website}
             </a>
@@ -45,77 +45,124 @@ export default function ResumePage() {
       </div>
 
       <div id="resume-content" className="flex flex-col gap-10">
-        <Section title="Summary">
-          <p className="text-sm leading-relaxed text-muted-foreground">{summary}</p>
-        </Section>
+        <section>
+          <h2 className="mb-3 text-lg font-semibold tracking-tight">Skills</h2>
+          <div className="flex flex-wrap gap-2">
+            {skills.map((s) => (
+              <span key={s} className="border px-3 py-1 text-sm">
+                {s}
+              </span>
+            ))}
+          </div>
+        </section>
 
-        <Section title="Experience">
+        <section>
+          <h2 className="mb-3 text-lg font-semibold tracking-tight">Languages</h2>
+          <div className="flex flex-wrap gap-2">
+            {languages.map((l) => (
+              <span key={l} className="border px-3 py-1 text-sm">
+                {l}
+              </span>
+            ))}
+          </div>
+        </section>
+
+        <section>
+          <h2 className="mb-3 text-lg font-semibold tracking-tight">Technologies</h2>
+          <div className="flex flex-wrap gap-2">
+            {technologies.map((t) => (
+              <span key={t} className="border px-3 py-1 text-sm">
+                {t}
+              </span>
+            ))}
+          </div>
+        </section>
+
+        <section>
+          <h2 className="mb-4 text-lg font-semibold tracking-tight">Projects</h2>
           <div className="flex flex-col gap-6">
-            {experience.map((exp, i) => (
-              <div key={i}>
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <h3 className="font-semibold">{exp.role}</h3>
-                    <p className="text-sm text-muted-foreground">
-                      {exp.company} — {exp.location}
-                    </p>
+            {projects.map((p) => (
+              <div key={p.name}>
+                <h3 className="font-semibold">{p.name}</h3>
+                <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{p.description}</p>
+                {(p.liveUrl || p.repoUrl) && (
+                  <div className="mt-1.5 flex items-center gap-3 text-sm">
+                    {p.liveUrl && (
+                      <a
+                        href={p.liveUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-muted-foreground underline underline-offset-2 transition-colors hover:text-foreground"
+                      >
+                        Live Site
+                      </a>
+                    )}
+                    {p.repoUrl && (
+                      <a
+                        href={p.repoUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-muted-foreground underline underline-offset-2 transition-colors hover:text-foreground"
+                      >
+                        Repository
+                      </a>
+                    )}
                   </div>
-                  <span className="shrink-0 text-sm text-muted-foreground">
-                    {exp.startDate} — {exp.endDate ?? "Present"}
-                  </span>
-                </div>
-                {exp.highlights.length > 0 && (
-                  <ul className="mt-2 flex flex-col gap-1">
-                    {exp.highlights.map((h, j) => (
-                      <li key={j} className="flex items-start gap-2 text-sm text-muted-foreground">
-                        <span className="mt-1.5 block size-1 shrink-0 rounded-full bg-muted-foreground/50" />
-                        {h}
-                      </li>
-                    ))}
-                  </ul>
                 )}
               </div>
             ))}
           </div>
-        </Section>
+        </section>
 
-        <Section title="Education">
-          <div className="flex flex-col gap-4">
-            {education.map((edu, i) => (
-              <div key={i} className="flex items-start justify-between gap-4">
-                <div>
-                  <h3 className="font-semibold">{edu.institution}</h3>
+        <section>
+          <h2 className="mb-4 text-lg font-semibold tracking-tight">Experience</h2>
+          <div className="flex flex-col gap-6">
+            {experience.map((exp, i) => (
+              <div key={i}>
+                <div className="flex flex-col gap-1">
+                  <div className="flex items-start justify-between gap-4">
+                    <h3 className="font-semibold">{exp.company}</h3>
+                    <span className="shrink-0 text-sm text-muted-foreground">
+                      {exp.startDate} — {exp.endDate ?? "Present"}
+                    </span>
+                  </div>
+                  <p className="text-sm text-muted-foreground">{exp.address}</p>
                   <p className="text-sm text-muted-foreground">
-                    {edu.degree} in {edu.field}
+                    <span className="text-foreground">Position:</span> {exp.role}
                   </p>
                 </div>
-                <span className="shrink-0 text-sm text-muted-foreground">
-                  {edu.startDate} — {edu.endDate}
-                </span>
+                <ul className="mt-2 flex flex-col gap-1">
+                  {exp.responsibilities.map((r, j) => (
+                    <li key={j} className="flex items-start gap-2 text-sm text-muted-foreground">
+                      <span className="mt-1.5 block size-1 shrink-0 rounded-full bg-muted-foreground/50" />
+                      {r}
+                    </li>
+                  ))}
+                </ul>
               </div>
             ))}
           </div>
-        </Section>
+        </section>
 
-        <Section title="Skills">
-          <div className="grid gap-4 sm:grid-cols-2">
-            {skills.map((group) => (
-              <div key={group.category}>
-                <h3 className="mb-2 text-sm font-medium text-muted-foreground">{group.category}</h3>
-                <div className="flex flex-wrap gap-2">
-                  {group.items.map((skill) => (
-                    <span
-                      key={skill}
-                      className="border px-2.5 py-1 text-xs"
-                    >
-                      {skill}
-                    </span>
-                  ))}
+        <section>
+          <h2 className="mb-4 text-lg font-semibold tracking-tight">Courses</h2>
+          <div className="flex flex-col gap-4">
+            {courses.map((c, i) => (
+              <div key={i} className="flex items-start justify-between gap-4">
+                <div>
+                  <h3 className="font-semibold">{c.name}</h3>
+                  <p className="text-sm text-muted-foreground">{c.institution}</p>
+                </div>
+                <div className="shrink-0 text-right text-sm text-muted-foreground">
+                  <p>{c.type}</p>
+                  <p>
+                    {c.startDate} — {c.endDate}
+                  </p>
                 </div>
               </div>
             ))}
           </div>
-        </Section>
+        </section>
       </div>
     </div>
   )
