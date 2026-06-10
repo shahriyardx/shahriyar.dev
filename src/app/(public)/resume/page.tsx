@@ -2,7 +2,15 @@ import { prisma } from "@/lib/prisma"
 import { resumeData } from "@/lib/resume-data"
 import { ResumeDownload } from "@/components/resume-download"
 import { Icon } from "@/components/icon-wrapper"
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardAction,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import type { Metadata } from "next"
 
@@ -77,18 +85,18 @@ export default async function ResumePage() {
           <Section title="Projects">
             <div className="flex flex-col gap-3">
               {projects.map((p) => (
-                <Card key={p.id} className="border-border/50">
-                  <CardHeader className="p-4 pb-0">
-                    <div className="flex items-center justify-between">
-                      <h3 className="font-semibold">{p.title}</h3>
-                      {p.url && (
+                <Card key={p.id}>
+                  <CardHeader>
+                    <CardTitle>{p.title}</CardTitle>
+                    {p.url && (
+                      <CardAction>
                         <a href={p.url} target="_blank" rel="noopener noreferrer" className="text-xs text-muted-foreground underline underline-offset-2 transition-colors hover:text-foreground">
                           Live Site &rarr;
                         </a>
-                      )}
-                    </div>
+                      </CardAction>
+                    )}
                   </CardHeader>
-                  <CardContent className="p-4 pt-2">
+                  <CardContent>
                     <p className="text-sm leading-relaxed text-muted-foreground">{p.description}</p>
                   </CardContent>
                 </Card>
@@ -100,21 +108,18 @@ export default async function ResumePage() {
         <Section title="Experience">
           <div className="flex flex-col gap-3">
             {experience.map((exp, i) => (
-              <Card key={i} className="border-border/50">
-                <CardHeader className="p-4 pb-0">
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <h3 className="font-semibold">{exp.role}</h3>
-                      <p className="text-sm text-muted-foreground">{exp.company}</p>
-                    </div>
-                    <span className="shrink-0 text-xs text-muted-foreground">
+              <Card key={i}>
+                <CardHeader>
+                  <CardTitle>{exp.role}</CardTitle>
+                  <CardDescription>{exp.company} — {exp.address}</CardDescription>
+                  <CardAction>
+                    <span className="text-xs text-muted-foreground">
                       {exp.startDate} — {exp.endDate ?? "Present"}
                     </span>
-                  </div>
+                  </CardAction>
                 </CardHeader>
-                <CardContent className="p-4 pt-2">
-                  <p className="text-xs text-muted-foreground/70">{exp.address}</p>
-                  <ul className="mt-2 flex flex-col gap-1">
+                <CardContent>
+                  <ul className="flex flex-col gap-1">
                     {exp.responsibilities.map((r, j) => (
                       <li key={j} className="flex items-start gap-2 text-sm text-muted-foreground">
                         <span className="mt-1.5 block size-1 shrink-0 rounded-full bg-muted-foreground/50" />
@@ -131,18 +136,16 @@ export default async function ResumePage() {
         <Section title="Courses">
           <div className="flex flex-col gap-3">
             {courses.map((c, i) => (
-              <Card key={i} className="border-border/50">
-                <CardHeader className="p-4 pb-0">
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <h3 className="font-semibold">{c.name}</h3>
-                      <p className="text-sm text-muted-foreground">{c.institution}</p>
-                    </div>
-                    <div className="shrink-0 text-right text-xs text-muted-foreground">
+              <Card key={i}>
+                <CardHeader>
+                  <CardTitle>{c.name}</CardTitle>
+                  <CardDescription>{c.institution}</CardDescription>
+                  <CardAction>
+                    <div className="text-right text-xs text-muted-foreground">
                       <p>{c.type}</p>
                       <p>{c.startDate} — {c.endDate}</p>
                     </div>
-                  </div>
+                  </CardAction>
                 </CardHeader>
               </Card>
             ))}
