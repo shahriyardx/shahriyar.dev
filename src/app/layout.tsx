@@ -22,9 +22,21 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "Shahriyar — Full-Stack Developer",
+  title: {
+    default: "Shahriyar — Full-Stack Developer",
+    template: "%s — Shahriyar",
+  },
   description:
     "Full-stack developer crafting performant, accessible web experiences with modern technologies.",
+  metadataBase: new URL("https://shahriyar.dev"),
+  openGraph: {
+    siteName: "Shahriyar",
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+  },
 }
 
 export default function RootLayout({

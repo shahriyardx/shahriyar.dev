@@ -15,8 +15,9 @@ import { Badge } from "@/components/ui/badge"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Resume — Shahriyar",
-  description: "Web developer resume",
+  title: "Resume",
+  description:
+    "Web developer specializing in React, Next.js, Node.js, and modern web technologies. View my experience, projects, and skills.",
 }
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {

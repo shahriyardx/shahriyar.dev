@@ -17,10 +17,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const post = await prisma.post.findUnique({ where: { slug } })
   if (!post) return { title: "Not Found" }
   return {
-    title: `${post.title} — Shahriyar`,
+    title: post.title,
     description: post.excerpt ?? post.title,
     openGraph: {
-      title: `${post.title} — Shahriyar`,
+      title: post.title,
       description: post.excerpt ?? post.title,
       type: "article",
       publishedTime: post.createdAt.toISOString(),
@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     twitter: {
       card: "summary_large_image",
-      title: `${post.title} — Shahriyar`,
+      title: post.title,
       description: post.excerpt ?? post.title,
     },
   }

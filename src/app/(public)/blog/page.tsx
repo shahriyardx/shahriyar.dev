@@ -3,8 +3,10 @@ import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
 import { Section } from "@/components/section"
 
-export const metadata = {
-  title: "Blog — Shahriyar",
+import type { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Blog",
   description: "Thoughts on web development, technology, and building things.",
 }
 
