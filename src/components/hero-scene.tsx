@@ -34,7 +34,7 @@ function Shapes() {
 
 export function HeroScene() {
   return (
-    <div className="pointer-events-none absolute inset-0 -z-10 hidden md:block">
+    <div className="pointer-events-none absolute left-1/2 top-0 -z-10 hidden w-full max-w-5xl -translate-x-1/2 px-6 md:block">
       <Canvas camera={{ position: [0, 0, 3.5], fov: 50 }} gl={{ alpha: true }}>
         <Shapes />
       </Canvas>
