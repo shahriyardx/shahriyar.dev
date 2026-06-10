@@ -4,10 +4,12 @@ import Link from "next/link"
 import { ArrowRight } from "@phosphor-icons/react"
 import { Button } from "@/components/ui/button"
 import { Section } from "@/components/section"
+import { HeroScene } from "@/components/hero-scene"
 
 export function Hero() {
   return (
-    <Section className="flex items-center pt-28 pb-0 md:pt-36">
+    <Section className="relative overflow-hidden flex items-center pt-28 pb-0 md:pt-36">
+      <HeroScene />
       <div className="flex w-full flex-col gap-8">
         <div className="flex flex-col gap-4">
           <span className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
