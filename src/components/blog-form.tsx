@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useRef, useState } from "react"
 import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
@@ -58,6 +58,7 @@ export function BlogForm({
 }: BlogFormProps) {
   const [aiLoading, setAiLoading] = useState<string | null>(null)
   const [preview, setPreview] = useState(false)
+  const autoSlug = useRef(!defaultValues.slug)
   const form = useForm<BlogFormData>({
     resolver: zodResolver(blogFormSchema),
     defaultValues,
@@ -116,7 +117,9 @@ export function BlogForm({
                 autoComplete="off"
                 onChange={(e) => {
                   field.onChange(e)
-                  form.setValue("slug", generateSlug(e.target.value))
+                  if (autoSlug.current) {
+                    form.setValue("slug", generateSlug(e.target.value))
+                  }
                 }}
               />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
