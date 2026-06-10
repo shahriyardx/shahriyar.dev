@@ -5,6 +5,8 @@ import { notFound } from "next/navigation"
 import { Badge } from "@/components/ui/badge"
 import { Markdown } from "@/components/markdown"
 import { Icon } from "@/components/icon-wrapper"
+import { TableOfContents } from "@/components/toc"
+import { extractTOC } from "@/lib/toc"
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -17,6 +19,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: `${post.title} — Shahriyar`,
     description: post.excerpt ?? post.title,
+    openGraph: {
+      title: `${post.title} — Shahriyar`,
+      description: post.excerpt ?? post.title,
+      type: "article",
+      publishedTime: post.createdAt.toISOString(),
+      tags: post.tags,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${post.title} — Shahriyar`,
+      description: post.excerpt ?? post.title,
+    },
   }
 }
 
@@ -44,6 +58,8 @@ export default async function BlogPostPage({ params }: Props) {
         orderBy: { createdAt: "desc" },
       })
     : []
+
+  const tocItems = extractTOC(post.content)
 
   return (
     <article className="mx-auto max-w-5xl px-6 pt-28 pb-20">
@@ -77,8 +93,17 @@ export default async function BlogPostPage({ params }: Props) {
         </div>
       </header>
 
-      <div className="mt-12">
-        <Markdown>{post.content}</Markdown>
+      <div className="mt-12 flex gap-12">
+        <div className="min-w-0 flex-1">
+          <Markdown>{post.content}</Markdown>
+        </div>
+        {tocItems.length > 0 && (
+          <aside className="hidden w-56 shrink-0 lg:block">
+            <div className="sticky top-24">
+              <TableOfContents items={tocItems} />
+            </div>
+          </aside>
+        )}
       </div>
 
       {related.length > 0 && (
