@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
-import { Section, SectionLabel } from "@/components/section"
+import { Section } from "@/components/section"
 
 export const metadata = {
   title: "Blog — Shahriyar",
@@ -16,7 +16,6 @@ export default async function BlogPage() {
 
   return (
     <Section className="pt-28">
-      <SectionLabel>Blog</SectionLabel>
       <div className="flex flex-col gap-4">
         <h1 className="text-4xl font-black leading-[0.9] tracking-tight md:text-5xl">
           Blog

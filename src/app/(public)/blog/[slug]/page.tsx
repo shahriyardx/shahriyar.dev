@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 import { notFound } from "next/navigation"
+import { Badge } from "@/components/ui/badge"
 import { Markdown } from "@/components/markdown"
 import { Icon } from "@/components/icon-wrapper"
 import { TableOfContents } from "@/components/toc"
@@ -71,6 +72,13 @@ export default async function BlogPostPage({ params }: Props) {
       </Link>
 
       <header className="flex flex-col gap-4">
+        {post.tags.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {post.tags.map((tag) => (
+              <Badge key={tag} variant="secondary" className="text-xs">{tag}</Badge>
+            ))}
+          </div>
+        )}
         <h1 className="text-4xl font-black leading-[0.9] tracking-tight md:text-5xl">
           {post.title}
         </h1>
