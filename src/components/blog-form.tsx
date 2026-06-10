@@ -65,10 +65,13 @@ export function BlogForm({
 
   const generateFromTopic = async () => {
     const title = form.getValues("title")
-    if (!title) return
+    const existing = form.getValues("content")
+    if (!title && !existing) return
     setAiLoading("content")
     try {
-      const content = await generateContent(title)
+      const content = existing
+        ? await generateContent(`Rewrite and improve this blog post while keeping the same topic and key points:\n\n${existing.slice(0, 1000)}`, "editor")
+        : await generateContent(title)
       form.setValue("content", content)
       const excerpt = await generateExcerpt(content.slice(0, 500))
       form.setValue("excerpt", excerpt)
@@ -187,7 +190,22 @@ export function BlogForm({
         control={form.control}
         render={({ field, fieldState }) => (
           <Field data-invalid={fieldState.invalid}>
-            <FieldLabel htmlFor={field.name}>Excerpt</FieldLabel>
+            <div className="flex items-center justify-between">
+              <FieldLabel htmlFor={field.name}>Excerpt</FieldLabel>
+              <Button type="button" variant="ghost" size="sm" onClick={async () => {
+                const content = form.getValues("content")
+                if (!content) return
+                setAiLoading("excerpt")
+                try {
+                  const excerpt = await generateExcerpt(content.slice(0, 500))
+                  form.setValue("excerpt", excerpt)
+                } catch { /* ignore */ }
+                setAiLoading(null)
+              }} disabled={aiLoading === "excerpt"} className="gap-1">
+                <Sparkle size={12} weight={aiLoading === "excerpt" ? "fill" : "regular"} />
+                {aiLoading === "excerpt" ? "Generating..." : "AI Generate"}
+              </Button>
+            </div>
             <Textarea
               {...field}
               id={field.name}
