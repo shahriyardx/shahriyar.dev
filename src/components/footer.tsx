@@ -5,9 +5,9 @@ import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 
 const socialLinks = [
-  { icon: GithubLogo, href: "#", label: "GitHub" },
-  { icon: LinkedinLogo, href: "#", label: "LinkedIn" },
-  { icon: XLogo, href: "#", label: "X" },
+  { icon: GithubLogo, href: "https://github.com/shahriyardx", label: "GitHub" },
+  { icon: LinkedinLogo, href: "https://www.linkedin.com/in/devshahriyar/", label: "LinkedIn" },
+  { icon: XLogo, href: "https://x.com/shahriyardx", label: "X" },
 ]
 
 export function Footer() {
@@ -25,6 +25,8 @@ export function Footer() {
               <a
                 key={link.label}
                 href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
                 aria-label={link.label}
                 className="text-muted-foreground transition-colors hover:text-foreground"
               >

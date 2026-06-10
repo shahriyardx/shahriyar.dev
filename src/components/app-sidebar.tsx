@@ -12,7 +12,7 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar"
-import { ChartBar, FileText, FolderOpen, House, SignOut } from "@phosphor-icons/react"
+import { ChartBar, Envelope, FileText, FolderOpen, House, SignOut } from "@phosphor-icons/react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { authClient } from "@/lib/auth-client"
@@ -21,6 +21,7 @@ const navItems = [
   { title: "Home", url: "/", icon: House },
   { title: "Overview", url: "/dashboard", icon: ChartBar },
   { title: "Blog", url: "/dashboard/blog", icon: FileText },
+  { title: "Messages", url: "/dashboard/messages", icon: Envelope },
   { title: "Projects", url: "/dashboard/projects", icon: FolderOpen },
 ]
 
@@ -51,9 +52,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarGroupLabel>Navigation</SidebarGroupLabel>
           <SidebarMenu>
             {navItems.map((item) => {
-              const isActive =
-                pathname.startsWith(item.url) &&
-                (item.url !== "/" || pathname === "/")
+              const isActive = pathname === item.url || (item.url !== "/" && item.url !== "/dashboard" && pathname.startsWith(item.url + "/"))
               return (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton

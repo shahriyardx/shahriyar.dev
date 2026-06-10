@@ -12,11 +12,12 @@ function StatCard({ label, value, href }: { label: string; value: number; href: 
 }
 
 export default async function Dashboard() {
-  const [projectCount, postCount, publishedCount, totalViews] = await Promise.all([
+  const [projectCount, postCount, publishedCount, totalViews, unreadMessages] = await Promise.all([
     prisma.project.count(),
     prisma.post.count(),
     prisma.post.count({ where: { published: true } }),
     prisma.post.aggregate({ _sum: { views: true } }).then((r) => r._sum.views ?? 0),
+    prisma.contactMessage.count({ where: { read: false } }),
   ])
 
   return (
@@ -33,6 +34,7 @@ export default async function Dashboard() {
         <StatCard label="Total posts" value={postCount} href="/dashboard/blog" />
         <StatCard label="Published" value={publishedCount} href="/dashboard/blog" />
         <StatCard label="Total views" value={totalViews} href="/dashboard/blog" />
+        <StatCard label="Unread messages" value={unreadMessages} href="/dashboard/messages" />
       </div>
 
       <div className="flex gap-3">
