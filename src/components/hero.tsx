@@ -33,6 +33,9 @@ export function Hero() {
             </Link>
           </Button>
           <Button variant="outline" size="lg" asChild>
+            <Link href="/resume">Resume</Link>
+          </Button>
+          <Button variant="ghost" size="lg" asChild>
             <Link href="/contact">Get in touch</Link>
           </Button>
         </div>
