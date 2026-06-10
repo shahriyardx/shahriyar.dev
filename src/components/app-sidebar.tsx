@@ -12,12 +12,14 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar"
-import { FileText, FolderOpen, House } from "@phosphor-icons/react"
+import { ChartBar, FileText, FolderOpen, House, SignOut } from "@phosphor-icons/react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { authClient } from "@/lib/auth-client"
 
 const navItems = [
   { title: "Home", url: "/", icon: House },
+  { title: "Overview", url: "/dashboard", icon: ChartBar },
   { title: "Blog", url: "/dashboard/blog", icon: FileText },
   { title: "Projects", url: "/dashboard/projects", icon: FolderOpen },
 ]
@@ -70,7 +72,19 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter />
+      <SidebarFooter>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              tooltip="Sign out"
+              onClick={() => authClient.signOut().then(() => window.location.href = "/")}
+            >
+              <SignOut />
+              <span>Sign out</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   )

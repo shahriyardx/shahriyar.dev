@@ -52,6 +52,16 @@ export const blogRouter = router({
       return prisma.post.update({ where: { id }, data })
     }),
 
+  incrementViews: publicProcedure
+    .input(z.object({ slug: z.string() }))
+    .mutation(async ({ input }) => {
+      await prisma.post.update({
+        where: { slug: input.slug },
+        data: { views: { increment: 1 } },
+      })
+      return { success: true }
+    }),
+
   delete: publicProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ input }) => {

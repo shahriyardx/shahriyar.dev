@@ -26,6 +26,11 @@ export default async function BlogPostPage({ params }: Props) {
 
   if (!post || !post.published) notFound()
 
+  await prisma.post.update({
+    where: { id: post.id },
+    data: { views: { increment: 1 } },
+  })
+
   const readTime = Math.max(1, Math.ceil(post.content.split(/\s+/).length / 200))
 
   const related = post.tags.length > 0

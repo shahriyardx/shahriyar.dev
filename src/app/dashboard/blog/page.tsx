@@ -94,7 +94,7 @@ export default function BlogPage() {
   )
 }
 
-function PostCard({ post, onDelete }: { post: { id: string; title: string; slug: string; excerpt: string | null; tags: string[]; published: boolean }; onDelete: () => void }) {
+function PostCard({ post, onDelete }: { post: { id: string; title: string; slug: string; excerpt: string | null; tags: string[]; published: boolean; views: number }; onDelete: () => void }) {
   return (
     <Card>
       <CardHeader>
@@ -111,7 +111,10 @@ function PostCard({ post, onDelete }: { post: { id: string; title: string; slug:
         )}
       </CardContent>
       <CardFooter className="flex items-center justify-between gap-1">
-        <span className="text-xs text-muted-foreground">/{post.slug}</span>
+        <div className="flex items-center gap-3">
+          <span className="text-xs text-muted-foreground">/{post.slug}</span>
+          <span className="text-xs text-muted-foreground">{post.views} views</span>
+        </div>
         <div className="flex items-center gap-1">
           <Button variant="outline" size="icon" asChild>
             <Link href={`/dashboard/blog/${post.id}/edit`}>
