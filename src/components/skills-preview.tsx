@@ -3,7 +3,6 @@
 import {
   SiDocker,
   SiGit,
-  SiGraphql,
   SiJavascript,
   SiLinux,
   SiMongodb,
@@ -38,7 +37,6 @@ const skills: { name: string; icon: React.ComponentType<{ size?: number }> }[] =
     { name: "Docker", icon: SiDocker },
     { name: "Redis", icon: SiRedis },
     { name: "Prisma", icon: SiPrisma },
-    { name: "GraphQL", icon: SiGraphql },
     { name: "Tailwind CSS", icon: SiTailwindcss },
     { name: "Linux", icon: SiLinux },
     { name: "Git", icon: SiGit },
