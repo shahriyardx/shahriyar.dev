@@ -11,7 +11,7 @@ export function ResumeDownload() {
   const download = async () => {
     setLoading(true)
     try {
-      const html2canvas = (await import("html2canvas")).default
+      const domtoimage = (await import("dom-to-image-more")).default
       const { jsPDF } = await import("jspdf")
 
       const el = document.getElementById("resume-content")
@@ -20,19 +20,21 @@ export function ResumeDownload() {
         return
       }
 
-      const canvas = await html2canvas(el, {
-        scale: 2,
-        backgroundColor: "#09090b",
-        useCORS: true,
+      const imgData = await domtoimage.toPng(el, {
+        width: el.scrollWidth,
+        height: el.scrollHeight,
+        style: {
+          transform: "scale(1)",
+          transformOrigin: "top left",
+        },
       })
 
-      const imgData = canvas.toDataURL("image/png")
       const pdf = new jsPDF("p", "mm", "a4")
       const pageWidth = pdf.internal.pageSize.getWidth()
       const pageHeight = pdf.internal.pageSize.getHeight()
       const margin = 10
       const imgWidth = pageWidth - margin * 2
-      const imgHeight = (canvas.height * imgWidth) / canvas.width
+      const imgHeight = (el.scrollHeight * imgWidth) / el.scrollWidth
       const usableHeight = pageHeight - margin * 2
 
       pdf.addImage(imgData, "PNG", margin, margin, imgWidth, imgHeight)
