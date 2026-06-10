@@ -1,6 +1,7 @@
 "use client"
 
 import { ArrowUpRight, Code } from "@phosphor-icons/react"
+import { trpc } from "@/lib/trpc/client"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -11,31 +12,11 @@ import {
 } from "@/components/ui/card"
 import { Section, SectionLabel } from "@/components/section"
 
-const featured = [
-  {
-    title: "Weird Teams",
-    description:
-      "Team management platform combining task management, knowledge base, and OKR tracking into one workspace. No noise, just ship.",
-    tags: ["Next.js", "TypeScript", "PostgreSQL"],
-    href: "https://teams.weirdsoft.co.uk",
-  },
-  {
-    title: "Custom Commands",
-    description:
-      "A powerful Discord bot for creating custom slash commands. Used by 1.2M+ members across thousands of servers with 99.9% uptime.",
-    tags: ["TypeScript", "PostgreSQL", "Discord", "Redis"],
-    href: "https://makeown.cc",
-  },
-  {
-    title: "Covert Ice Alliance",
-    description:
-      "Invite-only hockey league platform fostering sportsmanship and accountability. Features scheduling, team tracking, and merchandise.",
-    tags: ["Next.js", "TypeScript", "PostgreSQL"],
-    href: "https://coverticealliance.com",
-  },
-]
-
 export function FeaturedProjects() {
+  const { data: projects = [] } = trpc.project.list.useQuery()
+
+  if (projects.length === 0) return null
+
   return (
     <Section id="projects">
       <SectionLabel>Projects</SectionLabel>
@@ -49,7 +30,7 @@ export function FeaturedProjects() {
       </div>
 
       <div className="mt-8 grid gap-6 grid-cols-1">
-        {featured.map((project) => (
+        {projects.map((project) => (
           <Card key={project.title} className="group flex flex-col">
             <CardHeader>
               <div className="mb-2 flex size-10 items-center justify-center border bg-muted/50">
@@ -73,7 +54,7 @@ export function FeaturedProjects() {
                 ))}
               </div>
               <Button variant="ghost" size="sm" asChild className="gap-1 shrink-0">
-                <a href={project.href} target="_blank" rel="noopener noreferrer">
+                <a href={project.url} target="_blank" rel="noopener noreferrer">
                   Live site <ArrowUpRight size={14} />
                 </a>
               </Button>

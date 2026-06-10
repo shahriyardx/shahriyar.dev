@@ -21,7 +21,6 @@ import {
 import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { Section, SectionLabel } from "@/components/section"
@@ -58,25 +57,23 @@ export function SkillsPreview() {
         </p>
       </div>
 
-      <TooltipProvider delayDuration={200}>
-        <div className="mt-8 flex flex-wrap gap-3">
-          {skills.map((skill) => (
-            <Tooltip key={skill.name}>
-              <TooltipTrigger asChild>
-                <button
-                  className="flex size-12 items-center justify-center border bg-muted/30 text-muted-foreground transition-colors hover:border-foreground/30 hover:text-foreground"
-                  aria-label={skill.name}
-                >
-                  <skill.icon size={20} />
-                </button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>{skill.name}</p>
-              </TooltipContent>
-            </Tooltip>
-          ))}
-        </div>
-      </TooltipProvider>
+      <div className="mt-8 flex flex-wrap gap-3">
+        {skills.map((skill) => (
+          <Tooltip key={skill.name}>
+            <TooltipTrigger asChild>
+              <button
+                className="flex size-12 items-center justify-center border bg-muted/30 text-muted-foreground transition-colors hover:border-foreground/30 hover:text-foreground"
+                aria-label={skill.name}
+              >
+                <skill.icon size={20} />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{skill.name}</p>
+            </TooltipContent>
+          </Tooltip>
+        ))}
+      </div>
     </Section>
   )
 }

@@ -74,3 +74,17 @@ model Verification {
   @@index([identifier])
   @@map("verification")
 }
+
+model Project {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  url         String
+  tags        String[]
+  order       Int      @default(0)
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("project")
+}
