@@ -27,15 +27,12 @@ export function Hero() {
 
         <div className="flex flex-wrap gap-4">
           <Button size="lg" asChild>
-            <Link href="/#projects">
-              View my work
+            <Link href="/resume">
+              Resume
               <ArrowRight size={16} weight="bold" />
             </Link>
           </Button>
           <Button variant="outline" size="lg" asChild>
-            <Link href="/resume">Resume</Link>
-          </Button>
-          <Button variant="ghost" size="lg" asChild>
             <Link href="/contact">Get in touch</Link>
           </Button>
         </div>
