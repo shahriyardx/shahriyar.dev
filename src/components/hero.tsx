@@ -27,15 +27,19 @@ export function Hero() {
           </p>
         </div>
 
-        <div className="flex flex-wrap gap-4">
-          <Button size="lg" asChild>
+        <div className="flex flex-wrap gap-4" style={{ perspective: "800px" }}>
+          <Button size="lg" asChild className="relative overflow-hidden transition-all duration-300 hover:[transform:rotateX(4deg)_rotateY(-4deg)] hover:shadow-2xl">
             <Link href="/resume">
+              <span className="pointer-events-none absolute inset-0 bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,rgba(255,255,255,0.03)_2px,rgba(255,255,255,0.03)_4px)]" />
               Resume
               <ArrowRight size={16} weight="bold" />
             </Link>
           </Button>
-          <Button variant="outline" size="lg" asChild>
-            <Link href="/contact">Get in touch</Link>
+          <Button variant="outline" size="lg" asChild className="relative overflow-hidden transition-all duration-300 hover:[transform:rotateX(2deg)_rotateY(2deg)] hover:shadow-xl">
+            <Link href="/contact">
+              <span className="pointer-events-none absolute inset-0 bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,rgba(255,255,255,0.03)_2px,rgba(255,255,255,0.03)_4px)]" />
+              Get in touch
+            </Link>
           </Button>
         </div>
       </div>
