@@ -1,15 +1,14 @@
 "use client"
 
 import {
-  SiBootstrap,
-  SiCss,
   SiDjango,
   SiDocker,
+  SiDrizzle,
   SiExpress,
   SiFastapi,
   SiFirebase,
+  SiFramer,
   SiGit,
-  SiHtml5,
   SiJavascript,
   SiLinux,
   SiMongodb,
@@ -17,18 +16,16 @@ import {
   SiNextdotjs,
   SiNodedotjs,
   SiPostgresql,
+  SiPrisma,
   SiPython,
   SiReact,
-  SiRedux,
+  SiReactquery,
+  SiShadcnui,
   SiStripe,
   SiTailwindcss,
+  SiTrpc,
   SiTypescript,
 } from "react-icons/si"
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
 import { Section, SectionLabel } from "@/components/section"
 
 interface Skill {
@@ -55,11 +52,10 @@ const categories: SkillCategory[] = [
     items: [
       { name: "React", icon: SiReact },
       { name: "Next.js", icon: SiNextdotjs },
-      { name: "Redux", icon: SiRedux },
       { name: "Tailwind CSS", icon: SiTailwindcss },
-      { name: "Bootstrap", icon: SiBootstrap },
-      { name: "HTML5", icon: SiHtml5 },
-      { name: "CSS3", icon: SiCss },
+      { name: "shadcn/ui", icon: SiShadcnui },
+      { name: "TanStack Query", icon: SiReactquery },
+      { name: "Framer Motion", icon: SiFramer },
     ],
   },
   {
@@ -67,6 +63,7 @@ const categories: SkillCategory[] = [
     items: [
       { name: "Node.js", icon: SiNodedotjs },
       { name: "Express.js", icon: SiExpress },
+      { name: "tRPC", icon: SiTrpc },
       { name: "FastAPI", icon: SiFastapi },
       { name: "Django", icon: SiDjango },
     ],
@@ -77,6 +74,8 @@ const categories: SkillCategory[] = [
       { name: "MongoDB", icon: SiMongodb },
       { name: "MySQL", icon: SiMysql },
       { name: "PostgreSQL", icon: SiPostgresql },
+      { name: "Prisma", icon: SiPrisma },
+      { name: "Drizzle", icon: SiDrizzle },
     ],
   },
   {
@@ -117,20 +116,13 @@ export function SkillsPreview() {
             </h3>
             <div className="flex flex-wrap gap-2">
               {cat.items.map((skill) => (
-                <Tooltip key={skill.name}>
-                  <TooltipTrigger asChild>
-                    <button
-                      className="flex items-center gap-2 border bg-muted/30 px-3 py-2 text-xs text-muted-foreground transition-colors hover:border-foreground/30 hover:text-foreground"
-                      aria-label={skill.name}
-                    >
-                      <skill.icon size={16} />
-                      {skill.name}
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>{skill.name}</p>
-                  </TooltipContent>
-                </Tooltip>
+                <span
+                  key={skill.name}
+                  className="flex items-center gap-2 border bg-muted/30 px-3 py-2 text-xs text-muted-foreground transition-colors hover:border-foreground/30 hover:text-foreground"
+                >
+                  <skill.icon size={16} />
+                  {skill.name}
+                </span>
               ))}
             </div>
           </div>
