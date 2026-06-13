@@ -18,6 +18,7 @@ export function Comments({ postId, postSlug }: Props) {
   const [sessionLoaded, setSessionLoaded] = useState(false)
   const [content, setContent] = useState("")
   const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState("")
   const [deleting, setDeleting] = useState<string | null>(null)
 
   const { data: comments, refetch } = trpc.comment.list.useQuery({ postId })
@@ -45,12 +46,15 @@ export function Comments({ postId, postSlug }: Props) {
   const handleSubmit = async () => {
     if (!content.trim() || !user || submitting) return
     setSubmitting(true)
+    setError("")
     try {
       await createComment.mutateAsync({
         content: content.trim(),
         userId: user.id,
         postId,
       })
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed to post comment")
     } finally {
       setSubmitting(false)
     }
@@ -87,6 +91,9 @@ export function Comments({ postId, postSlug }: Props) {
         </div>
       ) : (
         <div className="mt-6 flex flex-col gap-3">
+          {error && (
+            <p className="text-sm text-destructive">{error}</p>
+          )}
           <Textarea
             placeholder="Write a comment..."
             value={content}
