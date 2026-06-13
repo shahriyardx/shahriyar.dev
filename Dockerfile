@@ -23,7 +23,6 @@ COPY --from=builder --chown=bun:bun /app/.next/static ./.next/static
 
 COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 
 COPY entrypoint.sh ./
 RUN chmod +x entrypoint.sh
