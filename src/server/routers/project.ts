@@ -4,7 +4,7 @@ import { publicProcedure, router } from "@/server/trpc"
 
 export const projectRouter = router({
   list: publicProcedure.query(async () => {
-    return prisma.project.findMany({ orderBy: { order: "asc" } })
+    return prisma.project.findMany({ orderBy: { createdAt: "desc" } })
   }),
 
   create: publicProcedure
