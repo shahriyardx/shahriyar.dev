@@ -16,7 +16,9 @@ export default async function DashboardLayout({
   children: React.ReactNode
 }) {
   const session = await auth.api.getSession({ headers: await headers() })
-  if (!session) redirect("/auth/login")
+  const user = session?.user as { role?: string } | undefined
+  if (!session || !user) redirect("/auth/login")
+  if (user.role !== "admin") redirect("/")
 
   return (
     <SidebarProvider>

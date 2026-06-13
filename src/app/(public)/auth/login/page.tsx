@@ -13,7 +13,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     authClient.getSession().then(({ data }) => {
-      if (data) router.push("/dashboard")
+      if (data) router.push("/admin")
     })
   }, [router])
 
@@ -22,7 +22,7 @@ export default function LoginPage() {
     setError("")
     const { error: err } = await authClient.signIn.social({
       provider: "github",
-      callbackURL: "/dashboard",
+      callbackURL: "/admin",
     })
     if (err) {
       setError(err.message ?? err.statusText ?? "Login failed")

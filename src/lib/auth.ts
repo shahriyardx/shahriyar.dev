@@ -1,5 +1,6 @@
 import { betterAuth } from "better-auth"
 import { prismaAdapter } from "better-auth/adapters/prisma"
+import { admin } from "better-auth/plugins"
 import { prisma } from "./prisma"
 import { env } from "./env"
 
@@ -13,14 +14,16 @@ export const auth = betterAuth({
       clientSecret: env.GITHUB_CLIENT_SECRET,
     },
   },
+  plugins: [admin()],
   databaseHooks: {
     user: {
       create: {
-        before: async () => {
+        before: async (user) => {
           const count = await prisma.user.count()
           if (count >= 1) {
             throw new Error("Only one admin account allowed")
           }
+          return { data: { ...user, role: "admin" } }
         },
       },
     },
