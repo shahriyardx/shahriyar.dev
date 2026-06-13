@@ -42,8 +42,8 @@ export const commentRouter = router({
   list: publicProcedure
     .input(z.object({ postId: z.string() }))
     .query(async ({ input }) => {
-      return prisma.comment.findMany({
-        where: { postId: input.postId },
+      const comments = await prisma.comment.findMany({
+        where: { postId: input.postId, parentId: null },
         orderBy: { createdAt: "desc" },
         select: {
           id: true,
@@ -51,8 +51,19 @@ export const commentRouter = router({
           userId: true,
           createdAt: true,
           user: { select: { name: true, image: true } },
+          replies: {
+            orderBy: { createdAt: "asc" },
+            select: {
+              id: true,
+              content: true,
+              userId: true,
+              createdAt: true,
+              user: { select: { name: true, image: true } },
+            },
+          },
         },
       })
+      return comments
     }),
 
   create: publicProcedure
@@ -61,6 +72,7 @@ export const commentRouter = router({
         content: z.string().min(1).max(1000),
         userId: z.string(),
         postId: z.string(),
+        parentId: z.string().optional(),
       }),
     )
     .mutation(async ({ input }) => {
@@ -74,6 +86,7 @@ export const commentRouter = router({
           content: input.content,
           userId: input.userId,
           postId: input.postId,
+          parentId: input.parentId,
         },
         select: {
           id: true,
