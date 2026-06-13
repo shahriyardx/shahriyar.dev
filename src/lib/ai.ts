@@ -3,7 +3,7 @@ export async function generateContent(topic: string, tone = "professional"): Pro
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      systemPrompt: `You are a ${tone} blog writer. Write a complete blog post in markdown format. Use headings, bullet points, and code blocks where appropriate.`,
+      systemPrompt: `You are a ${tone} blog writer. Write a complete blog post in markdown format. Use headings, bullet points, and code blocks where appropriate. Never use emoji in heading tags (H1 through H6). Keep headings clean and text-only.`,
       prompt: `Write a blog post about: ${topic}`,
     }),
   })
