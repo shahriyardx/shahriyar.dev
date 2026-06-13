@@ -22,7 +22,7 @@ import {
   MultiSelectTrigger,
   MultiSelectValue,
 } from "@/components/ui/multi-select"
-import { generateContent, generateExcerpt, suggestTags, suggestTitle } from "@/lib/ai"
+import { generateContentStream, generateExcerpt, suggestTags, suggestTitle } from "@/lib/ai"
 
 const TAGS = [
   "React", "Next.js", "TypeScript", "JavaScript", "Node.js",
@@ -70,10 +70,18 @@ export function BlogForm({
     if (!title && !existing) return
     setAiLoading("content")
     try {
-      const content = existing
-        ? await generateContent(`Rewrite and improve this blog post while keeping the same topic and key points:\n\n${existing}`, "editor")
-        : await generateContent(title)
-      form.setValue("content", content)
+      const stream = generateContentStream(
+        existing
+          ? `Rewrite and improve this blog post while keeping the same topic and key points:\n\n${existing}`
+          : title,
+        "editor",
+      )
+
+      let content = ""
+      for await (const chunk of stream) {
+        content += chunk
+        form.setValue("content", content, { shouldDirty: true })
+      }
 
       if (!title && existing) {
         const generated = await suggestTitle(content)
