@@ -75,7 +75,7 @@ export async function suggestTitle(topic: string): Promise<string> {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      systemPrompt: "Suggest a compelling blog post title for the given topic. Return only the title, nothing else.",
+      systemPrompt: "Suggest a compelling blog post title for the given topic. Return only the title, nothing else, no quotation marks.",
       prompt: topic,
       stream: false,
     }),
@@ -83,5 +83,5 @@ export async function suggestTitle(topic: string): Promise<string> {
 
   if (!res.ok) throw new Error("Failed to suggest title")
   const data = await res.json()
-  return data.content
+  return data.content.replace(/^["'「」『』“”]+|["'「」『』“”]+$/g, "").trim()
 }

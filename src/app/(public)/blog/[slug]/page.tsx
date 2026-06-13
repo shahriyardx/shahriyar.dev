@@ -82,7 +82,7 @@ export default async function BlogPostPage({ params }: Props) {
           </div>
         )}
         <h1 className="text-4xl font-black leading-[0.9] tracking-tight md:text-5xl">
-          {post.title}
+          {post.title.replace(/^["'“”]+|["'“”]+$/g, "").trim()}
         </h1>
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <time dateTime={post.createdAt.toISOString()}>
@@ -115,7 +115,7 @@ export default async function BlogPostPage({ params }: Props) {
             {related.map((r) => (
               <Link key={r.id} href={`/blog/${r.slug}`} className="group border p-5">
                 <h3 className="font-semibold tracking-tight transition-colors group-hover:text-muted-foreground">
-                  {r.title}
+                  {r.title.replace(/^["'“”]+|["'“”]+$/g, "").trim()}
                 </h3>
                 {r.excerpt && (
                   <p className="mt-2 text-sm text-muted-foreground line-clamp-2">{r.excerpt}</p>

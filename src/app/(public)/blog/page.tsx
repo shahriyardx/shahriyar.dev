@@ -38,7 +38,7 @@ export default async function BlogPage() {
           <Link key={post.id} href={`/blog/${post.slug}`} className="group border-b pb-8">
             <div className="flex flex-col gap-3">
               <h2 className="text-2xl font-bold tracking-tight transition-colors group-hover:text-muted-foreground">
-                {post.title}
+                {post.title.replace(/^["'“”]+|["'“”]+$/g, "").trim()}
               </h2>
               {post.excerpt && (
                 <p className="text-muted-foreground leading-relaxed">{post.excerpt}</p>
