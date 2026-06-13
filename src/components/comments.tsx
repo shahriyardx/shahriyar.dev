@@ -9,6 +9,10 @@ import type { inferRouterOutputs } from "@trpc/server"
 import type { AppRouter } from "@/server/routers/_app"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
+import { ComarkClient } from "@comark/react"
+import highlight from "@comark/react/plugins/highlight"
+
+const highlightPlugin = highlight()
 
 type RouterOutputs = inferRouterOutputs<AppRouter>
 type CommentWithReplies = RouterOutputs["comment"]["list"][number]
@@ -76,7 +80,7 @@ function CommentBlock({
               })}
             </span>
           </div>
-          <p className="text-sm text-muted-foreground">{comment.content}</p>
+          <ComarkClient markdown={comment.content} plugins={[highlightPlugin]} className="prose prose-sm prose-invert max-w-none text-muted-foreground" />
           {user && (
             <button
               onClick={() => onReply(comment.id)}
@@ -142,7 +146,7 @@ function CommentBlock({
                     })}
                   </span>
                 </div>
-                <p className="text-sm text-muted-foreground">{reply.content}</p>
+                <ComarkClient markdown={reply.content} plugins={[highlightPlugin]} className="prose prose-sm prose-invert max-w-none text-muted-foreground" />
               </div>
               {user && (reply.userId === user.id || isAdmin) && (
                 <button

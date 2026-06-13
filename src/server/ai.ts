@@ -55,6 +55,7 @@ export async function generateAutoReplyComment(params: {
     "you missed. Do NOT reply if it is: pure praise (\"Great post!\"), simple agreement, spam, " +
     "off-topic, a question already answered in the post, emoji-only, or very low effort. " +
     "If you reply, write 2-4 sentences as the blog author — conversational and helpful. " +
+    "Use proper markdown: wrap inline code in backticks, code blocks in triple backticks with language. " +
     'Respond with valid JSON only: {"shouldReply": boolean, "replyText": "string or empty", "reason": "short justification"}'
 
   const prompt =

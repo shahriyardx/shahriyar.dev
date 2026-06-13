@@ -15,30 +15,36 @@ async function moderateComment(content: string): Promise<{ safe: boolean; reason
   }
 }
 
-async function generateAutoReply(commentId: string, postId: string, commentContent: string): Promise<void> {
+async function generateAutoReply(
+  commentId: string,
+  postId: string,
+  commentContent: string,
+): Promise<{ id: string; content: string; createdAt: Date } | null> {
   try {
     const post = await prisma.post.findUnique({
       where: { id: postId },
       select: { title: true, content: true },
     })
-    if (!post) return
+    if (!post) return null
 
     const result = await generateAutoReplyComment({
       postTitle: post.title,
       postContent: post.content,
       commentContent,
     })
-    if (!result.shouldReply || !result.replyText) return
+    if (!result.shouldReply || !result.replyText) return null
 
-    await prisma.comment.create({
+    const reply = await prisma.comment.create({
       data: {
         content: result.replyText,
         postId,
         parentId: commentId,
       },
+      select: { id: true, content: true, createdAt: true },
     })
+    return reply
   } catch {
-    // Swallow — original comment already saved
+    return null
   }
 }
 
@@ -101,11 +107,12 @@ export const commentRouter = router({
         },
       })
 
+      let aiReply: { id: string; content: string; createdAt: Date } | null = null
       if (!input.parentId) {
-        void generateAutoReply(comment.id, input.postId, input.content)
+        aiReply = await generateAutoReply(comment.id, input.postId, input.content)
       }
 
-      return comment
+      return { comment, aiReply }
     }),
 
   delete: publicProcedure
