@@ -1,5 +1,6 @@
 "use client"
 
+import { Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
 import { authClient } from "@/lib/auth-client"
@@ -7,6 +8,16 @@ import { Button } from "@/components/ui/button"
 import { Section } from "@/components/section"
 
 export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-screen items-center justify-center pt-28" />
+    }>
+      <LoginForm />
+    </Suspense>
+  )
+}
+
+function LoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const callbackURL = searchParams.get("callbackURL") ?? "/admin"
