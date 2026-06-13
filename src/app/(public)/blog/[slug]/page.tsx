@@ -4,6 +4,7 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 import { Badge } from "@/components/ui/badge"
 import { Markdown } from "@/components/markdown"
+import { Comments } from "@/components/comments"
 import { Icon } from "@/components/icon-wrapper"
 import { TableOfContents } from "@/components/toc"
 import { extractTOC } from "@/lib/toc"
@@ -107,6 +108,8 @@ export default async function BlogPostPage({ params }: Props) {
           </aside>
         )}
       </div>
+
+      <Comments postId={post.id} postSlug={slug} />
 
       {related.length > 0 && (
         <div className="mt-20 border-t pt-12">

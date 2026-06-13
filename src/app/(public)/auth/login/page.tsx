@@ -1,6 +1,6 @@
 "use client"
 
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
 import { authClient } from "@/lib/auth-client"
 import { Button } from "@/components/ui/button"
@@ -8,21 +8,23 @@ import { Section } from "@/components/section"
 
 export default function LoginPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const callbackURL = searchParams.get("callbackURL") ?? "/admin"
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
 
   useEffect(() => {
     authClient.getSession().then(({ data }) => {
-      if (data) router.push("/admin")
+      if (data) router.push(callbackURL)
     })
-  }, [router])
+  }, [router, callbackURL])
 
   const login = async () => {
     setLoading(true)
     setError("")
     const { error: err } = await authClient.signIn.social({
       provider: "github",
-      callbackURL: "/admin",
+      callbackURL,
     })
     if (err) {
       setError(err.message ?? err.statusText ?? "Login failed")

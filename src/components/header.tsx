@@ -1,8 +1,10 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
-import { List, X } from "@phosphor-icons/react"
+import { useRouter } from "next/navigation"
+import { List, X, SignOut } from "@phosphor-icons/react"
+import { authClient } from "@/lib/auth-client"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { cn } from "@/lib/utils"
@@ -15,7 +17,25 @@ const navLinks = [
 ]
 
 export function Header() {
+  const router = useRouter()
   const [open, setOpen] = useState(false)
+  const [user, setUser] = useState<{ role?: string } | null>(null)
+  const [loaded, setLoaded] = useState(false)
+
+  useEffect(() => {
+    authClient.getSession().then(({ data }) => {
+      if (data) setUser(data.user as { role?: string })
+      setLoaded(true)
+    })
+  }, [])
+
+  const isAdmin = user?.role === "admin"
+
+  const handleLogout = async () => {
+    await authClient.signOut()
+    setUser(null)
+    router.push("/")
+  }
 
   return (
     <header className="fixed top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-md">
@@ -37,9 +57,24 @@ export function Header() {
               {link.label}
             </Link>
           ))}
-          <Button size="sm" asChild>
-            <a href="/contact">Get in touch</a>
-          </Button>
+          {loaded && isAdmin && (
+            <Link
+              href="/dashboard"
+              className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+            >
+              Dashboard
+            </Link>
+          )}
+          {loaded && user ? (
+            <Button variant="outline" size="sm" onClick={handleLogout}>
+              <SignOut size={14} className="mr-1" />
+              Logout
+            </Button>
+          ) : (
+            <Button size="sm" asChild>
+              <a href="/contact">Get in touch</a>
+            </Button>
+          )}
         </nav>
 
         <Sheet open={open} onOpenChange={setOpen}>
@@ -63,11 +98,31 @@ export function Header() {
                   {link.label}
                 </Link>
               ))}
-              <Button className="mt-4 w-full" asChild>
-                <a href="/contact" onClick={() => setOpen(false)}>
-                  Get in touch
-                </a>
-              </Button>
+              {loaded && isAdmin && (
+                <Link
+                  href="/dashboard"
+                  onClick={() => setOpen(false)}
+                  className="text-lg text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  Dashboard
+                </Link>
+              )}
+              {loaded && user ? (
+                <Button
+                  variant="outline"
+                  className="mt-4 w-full"
+                  onClick={() => { handleLogout(); setOpen(false) }}
+                >
+                  <SignOut size={14} className="mr-1" />
+                  Logout
+                </Button>
+              ) : (
+                <Button className="mt-4 w-full" asChild>
+                  <a href="/contact" onClick={() => setOpen(false)}>
+                    Get in touch
+                  </a>
+                </Button>
+              )}
             </nav>
           </SheetContent>
         </Sheet>
