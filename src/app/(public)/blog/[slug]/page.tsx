@@ -96,6 +96,36 @@ export default async function BlogPostPage({ params }: Props) {
         </div>
       </header>
 
+      {(post.tldr || post.keyTakeaways) && (
+        <div className="mt-8 flex flex-col gap-4 rounded-lg border bg-muted/30 p-5">
+          {post.tldr && (
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">TLDR</p>
+              <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{post.tldr}</p>
+            </div>
+          )}
+          {post.keyTakeaways && (
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Key Takeaways</p>
+              {(() => {
+                try {
+                  const items = JSON.parse(post.keyTakeaways)
+                  return Array.isArray(items) ? (
+                    <ul className="mt-1 flex flex-col gap-1">
+                      {items.map((item: string, i: number) => (
+                        <li key={i} className="text-sm text-muted-foreground">• {item}</li>
+                      ))}
+                    </ul>
+                  ) : null
+                } catch {
+                  return <p className="mt-1 text-sm text-muted-foreground">{post.keyTakeaways}</p>
+                }
+              })()}
+            </div>
+          )}
+        </div>
+      )}
+
       <div className="mt-12 flex gap-12">
         <div className="min-w-0 flex-1">
           <Markdown>{post.content}</Markdown>

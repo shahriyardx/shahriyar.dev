@@ -1,6 +1,7 @@
 import { z } from "zod"
 import { prisma } from "@/lib/prisma"
 import { publicProcedure, router } from "@/server/trpc"
+import { generateTLDR, generateKeyTakeaways } from "@/server/ai"
 
 export const blogRouter = router({
   list: publicProcedure.query(async () => {
@@ -32,7 +33,23 @@ export const blogRouter = router({
       }),
     )
     .mutation(async ({ input }) => {
-      return prisma.post.create({ data: input })
+      const post = await prisma.post.create({ data: input })
+
+      if (post.content) {
+        const [tldr, keyTakeaways] = await Promise.allSettled([
+          generateTLDR(post.content),
+          generateKeyTakeaways(post.content),
+        ])
+        await prisma.post.update({
+          where: { id: post.id },
+          data: {
+            tldr: tldr.status === "fulfilled" ? tldr.value : null,
+            keyTakeaways: keyTakeaways.status === "fulfilled" ? keyTakeaways.value : null,
+          },
+        })
+      }
+
+      return post
     }),
 
   update: publicProcedure
@@ -49,7 +66,23 @@ export const blogRouter = router({
     )
     .mutation(async ({ input }) => {
       const { id, ...data } = input
-      return prisma.post.update({ where: { id }, data })
+      const post = await prisma.post.update({ where: { id }, data })
+
+      if (post.content) {
+        const [tldr, keyTakeaways] = await Promise.allSettled([
+          generateTLDR(post.content),
+          generateKeyTakeaways(post.content),
+        ])
+        await prisma.post.update({
+          where: { id: post.id },
+          data: {
+            tldr: tldr.status === "fulfilled" ? tldr.value : null,
+            keyTakeaways: keyTakeaways.status === "fulfilled" ? keyTakeaways.value : null,
+          },
+        })
+      }
+
+      return post
     }),
 
   incrementViews: publicProcedure

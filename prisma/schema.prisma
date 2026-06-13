@@ -97,17 +97,19 @@ model Project {
 }
 
 model Post {
-  id        String   @id @default(cuid())
-  title     String
-  slug      String   @unique
-  content   String
-  excerpt   String?
-  tags      String[]
-  published Boolean  @default(false)
-  views     Int      @default(0)
-  comments  Comment[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            String   @id @default(cuid())
+  title         String
+  slug          String   @unique
+  content       String
+  excerpt       String?
+  tldr          String?
+  keyTakeaways  String?
+  tags          String[]
+  published     Boolean  @default(false)
+  views         Int      @default(0)
+  comments      Comment[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   @@map("post")
 }
