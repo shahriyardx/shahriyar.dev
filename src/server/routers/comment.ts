@@ -1,40 +1,44 @@
 import { z } from "zod"
 import { prisma } from "@/lib/prisma"
-import { env } from "@/lib/env"
 import { publicProcedure, router } from "@/server/trpc"
-
-const DEEPSEEK_URL = "https://api.deepseek.com/v1/chat/completions"
+import { callDeepSeek, generateAutoReplyComment } from "@/server/ai"
 
 async function moderateComment(content: string): Promise<{ safe: boolean; reason?: string }> {
-  const res = await fetch(DEEPSEEK_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${env.DEEPSEEK_API_KEY}`,
-    },
-    body: JSON.stringify({
-      model: "deepseek-chat",
-      messages: [
-        {
-          role: "system",
-          content:
-            "You are a content moderator. Check if the given comment contains: 18+ content, NSFW material, spam, dangerous/malicious content, hate speech, harassment, excessive emoji, or anything that could cause issues. Respond with valid JSON only: {\"safe\": boolean}. If unsafe, include a reason field: {\"safe\": false, \"reason\": \"short reason\"}. Be strict — reject anything borderline.",
-        },
-        { role: "user", content },
-      ],
-      stream: false,
-    }),
-  })
-
-  if (!res.ok) throw new Error("Moderation service unavailable")
-
-  const data = await res.json()
-  const text = data.choices?.[0]?.message?.content ?? ""
+  const systemPrompt =
+    'You are a content moderator. Check if the given comment contains: 18+ content, NSFW material, spam, dangerous/malicious content, hate speech, harassment, excessive emoji, or anything that could cause issues. Respond with valid JSON only: {"safe": boolean}. If unsafe, include a reason field: {"safe": false, "reason": "short reason"}. Be strict — reject anything borderline.'
 
   try {
+    const text = await callDeepSeek(systemPrompt, content)
     return JSON.parse(text)
   } catch {
     return { safe: false, reason: "Moderation failed" }
+  }
+}
+
+async function generateAutoReply(commentId: string, postId: string, commentContent: string): Promise<void> {
+  try {
+    const post = await prisma.post.findUnique({
+      where: { id: postId },
+      select: { title: true, content: true },
+    })
+    if (!post) return
+
+    const result = await generateAutoReplyComment({
+      postTitle: post.title,
+      postContent: post.content,
+      commentContent,
+    })
+    if (!result.shouldReply || !result.replyText) return
+
+    await prisma.comment.create({
+      data: {
+        content: result.replyText,
+        postId,
+        parentId: commentId,
+      },
+    })
+  } catch {
+    // Swallow — original comment already saved
   }
 }
 
@@ -70,7 +74,7 @@ export const commentRouter = router({
     .input(
       z.object({
         content: z.string().min(1).max(1000),
-        userId: z.string(),
+        userId: z.string().optional(),
         postId: z.string(),
         parentId: z.string().optional(),
       }),
@@ -81,7 +85,7 @@ export const commentRouter = router({
         throw new Error(verdict.reason ?? "Comment rejected by moderation")
       }
 
-      return prisma.comment.create({
+      const comment = await prisma.comment.create({
         data: {
           content: input.content,
           userId: input.userId,
@@ -96,6 +100,12 @@ export const commentRouter = router({
           user: { select: { name: true, image: true } },
         },
       })
+
+      if (!input.parentId) {
+        void generateAutoReply(comment.id, input.postId, input.content)
+      }
+
+      return comment
     }),
 
   delete: publicProcedure

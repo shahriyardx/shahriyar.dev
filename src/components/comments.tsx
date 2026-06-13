@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { ChatDots } from "@phosphor-icons/react"
+import { ChatDots, Robot } from "@phosphor-icons/react"
 import { authClient } from "@/lib/auth-client"
 import { trpc } from "@/lib/trpc/client"
 import type { inferRouterOutputs } from "@trpc/server"
@@ -53,17 +53,23 @@ function CommentBlock({
     <div className="flex flex-col gap-3">
       <div className="flex gap-3">
         <div className="size-8 shrink-0 overflow-hidden rounded-full bg-muted">
-          {comment.user.image ? (
-            <img src={comment.user.image} alt="" className="size-full object-cover" />
+          {comment.user ? (
+            comment.user.image ? (
+              <img src={comment.user.image} alt="" className="size-full object-cover" />
+            ) : (
+              <div className="flex size-full items-center justify-center text-xs font-medium text-muted-foreground">
+                {comment.user.name?.charAt(0) ?? "?"}
+              </div>
+            )
           ) : (
-            <div className="flex size-full items-center justify-center text-xs font-medium text-muted-foreground">
-              {comment.user.name?.charAt(0) ?? "?"}
+            <div className="flex size-full items-center justify-center text-muted-foreground">
+              <Robot size={16} />
             </div>
           )}
         </div>
         <div className="flex flex-1 flex-col gap-1">
           <div className="flex items-center gap-2">
-            <span className="text-sm font-medium">{comment.user.name}</span>
+            <span className="text-sm font-medium">{comment.user?.name ?? "AI Assistant"}</span>
             <span className="text-xs text-muted-foreground">
               {new Date(comment.createdAt).toLocaleDateString("en-US", {
                 year: "numeric", month: "short", day: "numeric",
@@ -113,17 +119,23 @@ function CommentBlock({
           {comment.replies.map((reply: Reply) => (
             <div key={reply.id} className="flex gap-3">
               <div className="size-7 shrink-0 overflow-hidden rounded-full bg-muted">
-                {reply.user.image ? (
-                  <img src={reply.user.image} alt="" className="size-full object-cover" />
+                {reply.user ? (
+                  reply.user.image ? (
+                    <img src={reply.user.image} alt="" className="size-full object-cover" />
+                  ) : (
+                    <div className="flex size-full items-center justify-center text-xs font-medium text-muted-foreground">
+                      {reply.user.name?.charAt(0) ?? "?"}
+                    </div>
+                  )
                 ) : (
-                  <div className="flex size-full items-center justify-center text-xs font-medium text-muted-foreground">
-                    {reply.user.name?.charAt(0) ?? "?"}
+                  <div className="flex size-full items-center justify-center text-muted-foreground">
+                    <Robot size={14} />
                   </div>
                 )}
               </div>
               <div className="flex flex-1 flex-col gap-1">
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium">{reply.user.name}</span>
+                  <span className="text-sm font-medium">{reply.user?.name ?? "AI Assistant"}</span>
                   <span className="text-xs text-muted-foreground">
                     {new Date(reply.createdAt).toLocaleDateString("en-US", {
                       year: "numeric", month: "short", day: "numeric",

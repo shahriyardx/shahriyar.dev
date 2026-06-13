@@ -2,7 +2,7 @@ import { env } from "@/lib/env"
 
 const DEEPSEEK_URL = "https://api.deepseek.com/v1/chat/completions"
 
-async function callDeepSeek(systemPrompt: string, prompt: string): Promise<string> {
+export async function callDeepSeek(systemPrompt: string, prompt: string): Promise<string> {
   const res = await fetch(DEEPSEEK_URL, {
     method: "POST",
     headers: {
@@ -41,4 +41,31 @@ export async function generateKeyTakeaways(content: string): Promise<string> {
     if (Array.isArray(parsed)) return JSON.stringify(parsed)
   } catch {}
   return text
+}
+
+export async function generateAutoReplyComment(params: {
+  postTitle: string
+  postContent: string
+  commentContent: string
+}): Promise<{ shouldReply: boolean; replyText?: string; reason?: string }> {
+  const systemPrompt =
+    "You are a thoughtful blog author. A reader commented on your blog post. " +
+    "Decide if the comment deserves a reply. Reply ONLY if it: asks a substantive question, " +
+    "raises a counterpoint, shares relevant experience, invites discussion, or points out something " +
+    "you missed. Do NOT reply if it is: pure praise (\"Great post!\"), simple agreement, spam, " +
+    "off-topic, a question already answered in the post, emoji-only, or very low effort. " +
+    "If you reply, write 2-4 sentences as the blog author — conversational and helpful. " +
+    'Respond with valid JSON only: {"shouldReply": boolean, "replyText": "string or empty", "reason": "short justification"}'
+
+  const prompt =
+    `--- BLOG POST TITLE ---\n${params.postTitle}\n\n` +
+    `--- BLOG POST CONTENT ---\n${params.postContent}\n\n` +
+    `--- READER COMMENT ---\n${params.commentContent}`
+
+  const raw = await callDeepSeek(systemPrompt, prompt)
+  try {
+    return JSON.parse(raw)
+  } catch {
+    return { shouldReply: false, reason: "Failed to parse AI response" }
+  }
 }
