@@ -5,6 +5,8 @@ import { Section } from "@/components/section"
 
 import type { Metadata } from "next"
 
+export const dynamic = "force-dynamic"
+
 export const metadata: Metadata = {
   title: "Blog",
   description: "Thoughts on web development, technology, and building things.",

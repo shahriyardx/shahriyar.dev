@@ -8,6 +8,8 @@ import { Icon } from "@/components/icon-wrapper"
 import { TableOfContents } from "@/components/toc"
 import { extractTOC } from "@/lib/toc"
 
+export const dynamic = "force-dynamic"
+
 interface Props {
   params: Promise<{ slug: string }>
 }

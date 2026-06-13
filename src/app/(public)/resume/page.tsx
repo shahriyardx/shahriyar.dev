@@ -2,6 +2,8 @@ import { prisma } from "@/lib/prisma"
 import { resumeData } from "@/lib/resume-data"
 import { ResumeDownload } from "@/components/resume-download"
 import { Icon } from "@/components/icon-wrapper"
+
+export const dynamic = "force-dynamic"
 import {
   Card,
   CardHeader,
