@@ -21,7 +21,7 @@ export async function POST(request: Request) {
         { role: "system", content: systemPrompt ?? "You are a helpful writing assistant." },
         { role: "user", content: prompt },
       ],
-      stream: true,
+      stream: stream || false,
     }),
   })
 
