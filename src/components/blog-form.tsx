@@ -71,12 +71,12 @@ export function BlogForm({
     setAiLoading("content")
     try {
       const content = existing
-        ? await generateContent(`Rewrite and improve this blog post while keeping the same topic and key points:\n\n${existing.slice(0, 1000)}`, "editor")
+        ? await generateContent(`Rewrite and improve this blog post while keeping the same topic and key points:\n\n${existing}`, "editor")
         : await generateContent(title)
       form.setValue("content", content)
-      const excerpt = await generateExcerpt(content.slice(0, 500))
+      const excerpt = await generateExcerpt(content)
       form.setValue("excerpt", excerpt)
-      const tags = await suggestTags(content.slice(0, 500))
+      const tags = await suggestTags(content)
       if (tags.length) form.setValue("tags", tags)
     } catch { /* ignore */ }
     setAiLoading(null)
@@ -200,7 +200,7 @@ export function BlogForm({
                 if (!content) return
                 setAiLoading("excerpt")
                 try {
-                  const excerpt = await generateExcerpt(content.slice(0, 500))
+                  const excerpt = await generateExcerpt(content)
                   form.setValue("excerpt", excerpt)
                 } catch { /* ignore */ }
                 setAiLoading(null)
