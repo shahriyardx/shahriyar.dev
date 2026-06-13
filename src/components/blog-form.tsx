@@ -74,6 +74,15 @@ export function BlogForm({
         ? await generateContent(`Rewrite and improve this blog post while keeping the same topic and key points:\n\n${existing}`, "editor")
         : await generateContent(title)
       form.setValue("content", content)
+
+      if (!title && existing) {
+        const generated = await suggestTitle(content)
+        form.setValue("title", generated)
+        if (autoSlug.current) {
+          form.setValue("slug", generateSlug(generated))
+        }
+      }
+
       const excerpt = await generateExcerpt(content)
       form.setValue("excerpt", excerpt)
       const tags = await suggestTags(content)
