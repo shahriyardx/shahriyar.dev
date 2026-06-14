@@ -5,7 +5,7 @@ import { trpc } from "@/lib/trpc/client"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
-import { Section, SectionLabel } from "@/components/section"
+import { Section } from "@/components/section"
 
 export function FeaturedProjects() {
   const { data: projects = [] } = trpc.project.list.useQuery()
@@ -14,7 +14,6 @@ export function FeaturedProjects() {
 
   return (
     <Section id="projects">
-      <SectionLabel>Projects</SectionLabel>
       <div className="flex flex-col gap-4">
         <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
           Recent work
