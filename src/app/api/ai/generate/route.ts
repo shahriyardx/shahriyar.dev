@@ -6,7 +6,10 @@ export async function POST(request: Request) {
   const { prompt, systemPrompt, stream = false } = await request.json()
 
   if (!env.DEEPSEEK_API_KEY) {
-    return Response.json({ error: "DeepSeek API key not configured" }, { status: 400 })
+    return Response.json(
+      { error: "DeepSeek API key not configured" },
+      { status: 400 },
+    )
   }
 
   const res = await fetch(DEEPSEEK_URL, {
@@ -16,9 +19,12 @@ export async function POST(request: Request) {
       Authorization: `Bearer ${env.DEEPSEEK_API_KEY}`,
     },
     body: JSON.stringify({
-      model: "deepseek-chat",
+      model: "deepseek-v4-flash",
       messages: [
-        { role: "system", content: systemPrompt ?? "You are a helpful writing assistant." },
+        {
+          role: "system",
+          content: systemPrompt ?? "You are a helpful writing assistant.",
+        },
         { role: "user", content: prompt },
       ],
       stream: stream || false,
@@ -39,7 +45,8 @@ export async function POST(request: Request) {
   const decoder = new TextDecoder()
 
   const reader = res.body?.getReader()
-  if (!reader) return Response.json({ error: "No response body" }, { status: 500 })
+  if (!reader)
+    return Response.json({ error: "No response body" }, { status: 500 })
 
   const readable = new ReadableStream({
     async start(controller) {

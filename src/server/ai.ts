@@ -2,7 +2,10 @@ import { env } from "@/lib/env"
 
 const DEEPSEEK_URL = "https://api.deepseek.com/v1/chat/completions"
 
-export async function callDeepSeek(systemPrompt: string, prompt: string): Promise<string> {
+export async function callDeepSeek(
+  systemPrompt: string,
+  prompt: string,
+): Promise<string> {
   const res = await fetch(DEEPSEEK_URL, {
     method: "POST",
     headers: {
@@ -10,7 +13,7 @@ export async function callDeepSeek(systemPrompt: string, prompt: string): Promis
       Authorization: `Bearer ${env.DEEPSEEK_API_KEY}`,
     },
     body: JSON.stringify({
-      model: "deepseek-chat",
+      model: "deepseek-v4-flash",
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: prompt },
@@ -33,7 +36,7 @@ export async function generateTLDR(content: string): Promise<string> {
 
 export async function generateKeyTakeaways(content: string): Promise<string> {
   const text = await callDeepSeek(
-    "Extract 3-5 key takeaways from this blog post. Return as a JSON array of strings, nothing else. Example: [\"Takeaway one\", \"Takeaway two\"]",
+    'Extract 3-5 key takeaways from this blog post. Return as a JSON array of strings, nothing else. Example: ["Takeaway one", "Takeaway two"]',
     content,
   )
   try {
@@ -52,7 +55,7 @@ export async function generateAutoReplyComment(params: {
     "You are a thoughtful blog author. A reader commented on your blog post. " +
     "Decide if the comment deserves a reply. Reply ONLY if it: asks a substantive question, " +
     "raises a counterpoint, shares relevant experience, invites discussion, or points out something " +
-    "you missed. Do NOT reply if it is: pure praise (\"Great post!\"), simple agreement, spam, " +
+    'you missed. Do NOT reply if it is: pure praise ("Great post!"), simple agreement, spam, ' +
     "off-topic, a question already answered in the post, emoji-only, or very low effort. " +
     "If you reply, write 2-4 sentences as the blog author — conversational and helpful. " +
     "Use proper markdown: wrap inline code in backticks, code blocks in triple backticks with language. " +
