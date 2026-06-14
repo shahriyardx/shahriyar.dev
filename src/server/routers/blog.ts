@@ -1,7 +1,7 @@
 import { z } from "zod"
 import { prisma } from "@/lib/prisma"
 import { publicProcedure, router } from "@/server/trpc"
-import { generateTLDR, generateKeyTakeaways } from "@/server/ai"
+import { generateTLDR, generateKeyTakeaways, generateResources } from "@/server/ai"
 
 export const blogRouter = router({
   list: publicProcedure.query(async () => {
@@ -36,15 +36,17 @@ export const blogRouter = router({
       const post = await prisma.post.create({ data: input })
 
       if (post.content) {
-        const [tldr, keyTakeaways] = await Promise.allSettled([
+        const [tldr, keyTakeaways, resources] = await Promise.allSettled([
           generateTLDR(post.content),
           generateKeyTakeaways(post.content),
+          generateResources(post.content),
         ])
         await prisma.post.update({
           where: { id: post.id },
           data: {
             tldr: tldr.status === "fulfilled" ? tldr.value : null,
             keyTakeaways: keyTakeaways.status === "fulfilled" ? keyTakeaways.value : null,
+            resources: resources.status === "fulfilled" ? JSON.stringify(resources.value) : null,
           },
         })
       }
@@ -69,15 +71,17 @@ export const blogRouter = router({
       const post = await prisma.post.update({ where: { id }, data })
 
       if (post.content) {
-        const [tldr, keyTakeaways] = await Promise.allSettled([
+        const [tldr, keyTakeaways, resources] = await Promise.allSettled([
           generateTLDR(post.content),
           generateKeyTakeaways(post.content),
+          generateResources(post.content),
         ])
         await prisma.post.update({
           where: { id: post.id },
           data: {
             tldr: tldr.status === "fulfilled" ? tldr.value : null,
             keyTakeaways: keyTakeaways.status === "fulfilled" ? keyTakeaways.value : null,
+            resources: resources.status === "fulfilled" ? JSON.stringify(resources.value) : null,
           },
         })
       }

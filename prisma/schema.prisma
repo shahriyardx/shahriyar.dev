@@ -104,6 +104,7 @@ model Post {
   excerpt       String?
   tldr          String?
   keyTakeaways  String?
+  resources    String?
   tags          String[]
   published     Boolean  @default(false)
   views         Int      @default(0)

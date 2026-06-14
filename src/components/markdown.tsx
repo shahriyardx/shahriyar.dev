@@ -2,6 +2,12 @@ import { parse } from "comark/parse"
 import { ComarkRenderer } from "@comark/react"
 import { codeToHtml } from "shiki"
 
+interface Resource {
+  term: string
+  url: string
+  description: string
+}
+
 function extractText(node: unknown): string {
   if (typeof node === "string") return node
   if (Array.isArray(node)) return node.slice(2).map(extractText).join("")
@@ -50,9 +56,61 @@ async function highlightTree(nodes: unknown[]): Promise<void> {
   }
 }
 
-export async function Markdown({ children }: { children: string }) {
+function annotateResources(nodes: unknown[], resources: Resource[]): void {
+  for (const node of nodes) {
+    if (Array.isArray(node)) {
+      const tag = node[0] as string
+      if (tag === "pre" || tag === "code" || tag === "a") continue
+
+      const start = typeof node[1] === "object" && !Array.isArray(node[1]) ? 2 : 1
+
+      for (let i = start; i < node.length; i++) {
+        if (typeof node[i] === "string") {
+          let text = node[i] as string
+          for (const res of resources) {
+            const idx = text.toLowerCase().indexOf(res.term.toLowerCase())
+            if (idx === -1) continue
+            const before = text.slice(0, idx)
+            const after = text.slice(idx + res.term.length)
+            node[i] = [
+              before,
+              [
+                "a",
+                {
+                  href: res.url,
+                  target: "_blank",
+                  rel: "noopener noreferrer",
+                  class:
+                    "underline decoration-dotted underline-offset-2 decoration-muted-foreground/40 hover:decoration-foreground",
+                },
+                res.term,
+              ],
+              after,
+            ]
+            break
+          }
+        } else if (Array.isArray(node[i])) {
+          annotateResources([node[i] as unknown[]], resources)
+        }
+      }
+    }
+  }
+}
+
+export async function Markdown({ children, resources }: { children: string; resources?: string }) {
+  const parsed: Resource[] = resources ? safeParse(resources) : []
   const tree = await parse(children)
   annotateHeadings(tree.nodes)
   await highlightTree(tree.nodes)
+  if (parsed.length > 0) annotateResources(tree.nodes, parsed)
   return <ComarkRenderer tree={tree} className="prose prose-invert max-w-none" />
+}
+
+function safeParse(json: string): Resource[] {
+  try {
+    const parsed = JSON.parse(json)
+    return Array.isArray(parsed) ? parsed : []
+  } catch {
+    return []
+  }
 }

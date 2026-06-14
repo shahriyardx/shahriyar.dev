@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
 import { List, X, SignOut } from "@phosphor-icons/react"
 import { authClient } from "@/lib/auth-client"
 import { Button } from "@/components/ui/button"
@@ -18,6 +18,7 @@ const navLinks = [
 
 export function Header() {
   const router = useRouter()
+  const pathname = usePathname()
   const [open, setOpen] = useState(false)
   const [user, setUser] = useState<{ role?: string } | null>(null)
   const [loaded, setLoaded] = useState(false)
@@ -48,15 +49,22 @@ export function Header() {
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-            >
-              {link.label}
-            </Link>
-          ))}
+          {navLinks.map((link) => {
+            const isActive = pathname === link.href || pathname.startsWith(link.href + "/")
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={cn(
+                  "text-sm transition-colors",
+                  isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground",
+                )}
+              >
+                {isActive && <span className="mr-1 text-muted-foreground/30">//</span>}
+                {link.label}
+              </Link>
+            )
+          })}
           {loaded && isAdmin && (
             <Link
               href="/dashboard"
@@ -85,19 +93,23 @@ export function Header() {
           </SheetTrigger>
           <SheetContent side="right" className="w-64 p-6">
             <nav className="mt-12 flex flex-col gap-6">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setOpen(false)}
-                  className={cn(
-                    "text-lg transition-colors hover:text-foreground",
-                    "text-muted-foreground",
-                  )}
-                >
-                  {link.label}
-                </Link>
-              ))}
+              {navLinks.map((link) => {
+                const isActive = pathname === link.href || pathname.startsWith(link.href + "/")
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setOpen(false)}
+                    className={cn(
+                      "text-lg transition-colors",
+                      isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground",
+                    )}
+                  >
+                    {isActive && <span className="mr-1 text-muted-foreground/30">//</span>}
+                    {link.label}
+                  </Link>
+                )
+              })}
               {loaded && isAdmin && (
                 <Link
                   href="/dashboard"

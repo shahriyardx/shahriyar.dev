@@ -73,3 +73,20 @@ export async function generateAutoReplyComment(params: {
     return { shouldReply: false, reason: "Failed to parse AI response" }
   }
 }
+
+export async function generateResources(
+  content: string,
+): Promise<{ term: string; url: string; description: string }[]> {
+  const systemPrompt =
+    "You are a technical blog resource curator. Analyze the blog post content and identify the key " +
+    "technologies, tools, frameworks, and concepts mentioned. For each, provide the official resource " +
+    "link. Return up to 5 items as a JSON array, nothing else. " +
+    'Format: [{"term": "React", "url": "https://react.dev", "description": "Official React docs and guides"}, ...]'
+
+  const raw = await callDeepSeek(systemPrompt, content)
+  try {
+    const parsed = JSON.parse(raw)
+    if (Array.isArray(parsed)) return parsed.slice(0, 5)
+  } catch {}
+  return []
+}

@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Markdown } from "@/components/markdown"
 import { Comments } from "@/components/comments"
 import { PostSummary } from "@/components/post-summary"
+import { ResourceLinks } from "@/components/resource-links"
 import { Icon } from "@/components/icon-wrapper"
 import { TableOfContents } from "@/components/toc"
 import { extractTOC } from "@/lib/toc"
@@ -101,12 +102,13 @@ export default async function BlogPostPage({ params }: Props) {
 
       <div className="mt-12 flex gap-12">
         <div className="min-w-0 flex-1">
-          <Markdown>{post.content}</Markdown>
+          <Markdown resources={post.resources ?? undefined}>{post.content}</Markdown>
         </div>
-        {tocItems.length > 0 && (
+        {(tocItems.length > 0 || post.resources) && (
           <aside className="hidden w-56 shrink-0 lg:block">
             <div className="sticky top-24">
-              <TableOfContents items={tocItems} />
+              {tocItems.length > 0 && <TableOfContents items={tocItems} />}
+              {post.resources && <ResourceLinks resources={JSON.parse(post.resources)} />}
             </div>
           </aside>
         )}
