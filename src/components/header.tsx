@@ -83,7 +83,7 @@ export function Header() {
               {open ? <X size={18} /> : <List size={18} />}
             </Button>
           </SheetTrigger>
-          <SheetContent side="right" className="w-64">
+          <SheetContent side="right" className="w-64 p-6">
             <nav className="mt-12 flex flex-col gap-6">
               {navLinks.map((link) => (
                 <Link
