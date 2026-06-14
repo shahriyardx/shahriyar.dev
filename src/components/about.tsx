@@ -36,6 +36,81 @@ export function About() {
           ))}
         </div>
       </div>
+
+      <div className="mt-20 grid gap-12 md:grid-cols-2">
+        <div>
+          <SectionLabel>Editor & Terminal</SectionLabel>
+          <div className="flex flex-col gap-3">
+            <div className="border-l-2 px-4">
+              <p className="text-sm font-medium">Editor</p>
+              <p className="text-sm text-muted-foreground">Zed</p>
+            </div>
+            <div className="border-l-2 px-4">
+              <p className="text-sm font-medium">Terminal</p>
+              <p className="text-sm text-muted-foreground">Oh My Zsh</p>
+            </div>
+            <div className="border-l-2 px-4">
+              <p className="text-sm font-medium">Font</p>
+              <p className="text-sm text-muted-foreground">Nerd Font</p>
+            </div>
+          </div>
+        </div>
+        <div>
+          <SectionLabel>Hardware</SectionLabel>
+          <div className="flex flex-col gap-3">
+            <div className="border-l-2 px-4">
+              <p className="text-sm font-medium">PC</p>
+              <p className="text-sm text-muted-foreground">Ryzen 7 7700 · Arc A380</p>
+            </div>
+            <div className="border-l-2 px-4">
+              <p className="text-sm font-medium">Monitor</p>
+              <p className="text-sm text-muted-foreground">LG 27UN880</p>
+            </div>
+            <div className="border-l-2 px-4">
+              <p className="text-sm font-medium">Keyboard & Mouse</p>
+              <p className="text-sm text-muted-foreground">MCHOSE GX87 · MX Master 4</p>
+            </div>
+          </div>
+        </div>
+        <div>
+          <SectionLabel>Software</SectionLabel>
+          <div className="flex flex-col gap-3">
+            <div className="border-l-2 px-4">
+              <p className="text-sm font-medium">Browser</p>
+              <p className="text-sm text-muted-foreground">Chrome</p>
+            </div>
+            <div className="border-l-2 px-4">
+              <p className="text-sm font-medium">Git</p>
+              <p className="text-sm text-muted-foreground">GitHub CLI</p>
+            </div>
+            <div className="border-l-2 px-4">
+              <p className="text-sm font-medium">API Client</p>
+              <p className="text-sm text-muted-foreground">Bruno</p>
+            </div>
+          </div>
+        </div>
+        <div>
+          <SectionLabel>Stack</SectionLabel>
+          <div className="flex flex-col gap-3">
+            <div className="border-l-2 px-4">
+              <p className="text-sm font-medium">Framework</p>
+              <p className="text-sm text-muted-foreground">Next.js + TypeScript</p>
+            </div>
+            <div className="border-l-2 px-4">
+              <p className="text-sm font-medium">Styling</p>
+              <p className="text-sm text-muted-foreground">Tailwind CSS v4 + shadcn/ui</p>
+            </div>
+            <div className="border-l-2 px-4">
+              <p className="text-sm font-medium">Database</p>
+              <p className="text-sm text-muted-foreground">PostgreSQL + Prisma</p>
+            </div>
+            <div className="border-l-2 px-4">
+              <p className="text-sm font-medium">OS</p>
+              <p className="text-sm text-muted-foreground">Arch Linux (Hyprland)</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </Section>
   )
 }
