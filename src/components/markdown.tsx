@@ -57,42 +57,55 @@ async function highlightTree(nodes: unknown[]): Promise<void> {
 }
 
 function annotateResources(nodes: unknown[], resources: Resource[]): void {
-  for (const node of nodes) {
+  for (let n = 0; n < nodes.length; n++) {
+    const node = nodes[n]
     if (Array.isArray(node)) {
       const tag = node[0] as string
       if (tag === "pre" || tag === "code" || tag === "a") continue
 
       const start = typeof node[1] === "object" && !Array.isArray(node[1]) ? 2 : 1
 
+      // Recurse into child arrays first
       for (let i = start; i < node.length; i++) {
-        if (typeof node[i] === "string") {
-          let text = node[i] as string
-          for (const res of resources) {
-            const idx = text.toLowerCase().indexOf(res.term.toLowerCase())
-            if (idx === -1) continue
-            const before = text.slice(0, idx)
-            const after = text.slice(idx + res.term.length)
-            node[i] = [
-              before,
-              [
-                "a",
-                {
-                  href: res.url,
-                  target: "_blank",
-                  rel: "noopener noreferrer",
-                  class:
-                    "underline decoration-dotted underline-offset-2 decoration-muted-foreground/40 hover:decoration-foreground",
-                },
-                res.term,
-              ],
-              after,
-            ]
-            break
-          }
-        } else if (Array.isArray(node[i])) {
-          annotateResources([node[i] as unknown[]], resources)
-        }
+        if (Array.isArray(node[i])) annotateResources([node[i] as unknown[]], resources)
       }
+
+      // Rebuild children, splitting text nodes at resource term boundaries
+      const newChildren = node.slice(0, start)
+      for (let i = start; i < node.length; i++) {
+        const child = node[i]
+        if (typeof child !== "string") {
+          newChildren.push(child)
+          continue
+        }
+        let text = child as string
+        let matched = false
+        for (const res of resources) {
+          const idx = text.toLowerCase().indexOf(res.term.toLowerCase())
+          if (idx === -1) continue
+          if (idx > 0) newChildren.push(text.slice(0, idx))
+          newChildren.push([
+            "a",
+            {
+              href: res.url,
+              target: "_blank",
+              rel: "noopener noreferrer",
+              class:
+                "underline decoration-dotted underline-offset-2 decoration-muted-foreground/40 hover:decoration-foreground",
+            },
+            res.term,
+          ])
+          const after = text.slice(idx + res.term.length)
+          if (after) newChildren.push(after)
+          matched = true
+          break
+        }
+        if (!matched) newChildren.push(child)
+      }
+
+      // Replace in place
+      node.length = 0
+      for (let i = 0; i < newChildren.length; i++) node.push(newChildren[i])
     }
   }
 }
