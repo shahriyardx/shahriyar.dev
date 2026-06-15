@@ -5,11 +5,12 @@ import { callDeepSeek, generateAutoReplyComment } from "@/server/ai"
 
 async function moderateComment(content: string): Promise<{ safe: boolean; reason?: string }> {
   const systemPrompt =
-    'You are a content moderator. Check if the given comment contains: 18+ content, NSFW material, spam, dangerous/malicious content, hate speech, harassment, excessive emoji, or anything that could cause issues. Respond with valid JSON only: {"safe": boolean}. If unsafe, include a reason field: {"safe": false, "reason": "short reason"}. Be strict — reject anything borderline.'
+    'You are a content moderator. Check if the given comment contains: 18+ content, NSFW material, spam, dangerous/malicious content, hate speech, harassment, excessive emoji, or anything that could cause issues. Respond with valid JSON only. No markdown, no code blocks, no backticks. {"safe": boolean}. If unsafe, include a reason field: {"safe": false, "reason": "short reason"}. Be strict — reject anything borderline.'
 
   try {
     const text = await callDeepSeek(systemPrompt, content)
-    return JSON.parse(text)
+    const cleaned = text.replace(/^```(?:json)?\s*|\s*```$/g, "").trim()
+    return JSON.parse(cleaned)
   } catch {
     return { safe: false, reason: "Moderation failed" }
   }

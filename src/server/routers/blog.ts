@@ -1,7 +1,22 @@
 import { z } from "zod"
 import { prisma } from "@/lib/prisma"
 import { publicProcedure, router } from "@/server/trpc"
-import { generateTLDR, generateKeyTakeaways, generateResources } from "@/server/ai"
+import { generateTLDR, generateKeyTakeaways } from "@/server/ai"
+
+function generateSummary(postId: string, content: string) {
+  Promise.allSettled([
+    generateTLDR(content),
+    generateKeyTakeaways(content),
+  ]).then(([tldr, takeaways]) => {
+    return prisma.post.update({
+      where: { id: postId },
+      data: {
+        tldr: tldr.status === "fulfilled" ? tldr.value : null,
+        keyTakeaways: takeaways.status === "fulfilled" ? takeaways.value : null,
+      },
+    })
+  }).catch(() => {})
+}
 
 export const blogRouter = router({
   list: publicProcedure.query(async () => {
@@ -28,29 +43,14 @@ export const blogRouter = router({
         slug: z.string().min(1),
         content: z.string().min(1),
         excerpt: z.string().optional(),
+        resources: z.string().optional(),
         tags: z.array(z.string()).default([]),
         published: z.boolean().default(false),
       }),
     )
     .mutation(async ({ input }) => {
       const post = await prisma.post.create({ data: input })
-
-      if (post.content) {
-        const [tldr, keyTakeaways, resources] = await Promise.allSettled([
-          generateTLDR(post.content),
-          generateKeyTakeaways(post.content),
-          generateResources(post.content),
-        ])
-        await prisma.post.update({
-          where: { id: post.id },
-          data: {
-            tldr: tldr.status === "fulfilled" ? tldr.value : null,
-            keyTakeaways: keyTakeaways.status === "fulfilled" ? keyTakeaways.value : null,
-            resources: resources.status === "fulfilled" ? JSON.stringify(resources.value) : null,
-          },
-        })
-      }
-
+      generateSummary(post.id, post.content)
       return post
     }),
 
@@ -62,6 +62,7 @@ export const blogRouter = router({
         slug: z.string().min(1),
         content: z.string().min(1),
         excerpt: z.string().optional(),
+        resources: z.string().optional(),
         tags: z.array(z.string()).default([]),
         published: z.boolean().default(false),
       }),
@@ -69,23 +70,7 @@ export const blogRouter = router({
     .mutation(async ({ input }) => {
       const { id, ...data } = input
       const post = await prisma.post.update({ where: { id }, data })
-
-      if (post.content) {
-        const [tldr, keyTakeaways, resources] = await Promise.allSettled([
-          generateTLDR(post.content),
-          generateKeyTakeaways(post.content),
-          generateResources(post.content),
-        ])
-        await prisma.post.update({
-          where: { id: post.id },
-          data: {
-            tldr: tldr.status === "fulfilled" ? tldr.value : null,
-            keyTakeaways: keyTakeaways.status === "fulfilled" ? keyTakeaways.value : null,
-            resources: resources.status === "fulfilled" ? JSON.stringify(resources.value) : null,
-          },
-        })
-      }
-
+      generateSummary(post.id, post.content)
       return post
     }),
 

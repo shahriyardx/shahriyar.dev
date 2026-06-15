@@ -1,10 +1,10 @@
 "use client"
 
-import { useRef, useState } from "react"
-import { useForm, Controller } from "react-hook-form"
+import { useRef, useState, useEffect, useCallback } from "react"
+import { useForm, useFieldArray, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
-import { Eye, Sparkle } from "@phosphor-icons/react"
+import { Eye, Plus, Trash, Sparkle } from "@phosphor-icons/react"
 import { Comark } from "@comark/react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -22,7 +22,7 @@ import {
   MultiSelectTrigger,
   MultiSelectValue,
 } from "@/components/ui/multi-select"
-import { generateContentStream, generateExcerpt, suggestTags, suggestTitle } from "@/lib/ai"
+import { generateContentStream, generateExcerpt, generateResources, suggestTags, suggestTitle } from "@/lib/ai"
 
 const TAGS = [
   "React", "Next.js", "TypeScript", "JavaScript", "Node.js",
@@ -37,6 +37,7 @@ export const blogFormSchema = z.object({
   slug: z.string().min(1, "Slug is required"),
   content: z.string().min(1, "Content is required"),
   excerpt: z.string().optional(),
+  resources: z.string().optional(),
   tags: z.array(z.string()),
   published: z.boolean(),
 })
@@ -50,8 +51,83 @@ interface BlogFormProps {
   submitLabel?: string
 }
 
+interface ResourceEntry {
+  term: string
+  url: string
+  description: string
+}
+
+function parseResources(json?: string): ResourceEntry[] {
+  if (!json) return []
+  try {
+    const parsed = JSON.parse(json)
+    return Array.isArray(parsed) ? parsed : []
+  } catch { return [] }
+}
+
+function ResourcesField({ value, onChange }: { value?: string; onChange: (v: string) => void }) {
+  const [items, setItems] = useState<ResourceEntry[]>(() => parseResources(value))
+
+  useEffect(() => {
+    const parsed = parseResources(value)
+    if (JSON.stringify(parsed) !== JSON.stringify(items)) setItems(parsed)
+  }, [value])
+
+  const sync = (newItems: ResourceEntry[]) => {
+    setItems(newItems)
+    onChange(newItems.length > 0 ? JSON.stringify(newItems) : "")
+  }
+
+  const update = (i: number, field: keyof ResourceEntry, val: string) => {
+    const next = items.map((item, idx) => idx === i ? { ...item, [field]: val } : item)
+    sync(next)
+  }
+
+  const add = () => sync([...items, { term: "", url: "", description: "" }])
+  const remove = (i: number) => sync(items.filter((_, idx) => idx !== i))
+
+  return (
+    <Field>
+      <FieldLabel>Resources</FieldLabel>
+      <div className="flex flex-col gap-3">
+        {items.map((item, i) => (
+          <div key={i} className="flex items-start gap-2 rounded border p-3">
+            <div className="flex flex-1 flex-col gap-2">
+              <Input
+                placeholder="Term (e.g. React)"
+                value={item.term}
+                onChange={(e) => update(i, "term", e.target.value)}
+                className="text-sm"
+              />
+              <Input
+                placeholder="URL (e.g. https://react.dev)"
+                value={item.url}
+                onChange={(e) => update(i, "url", e.target.value)}
+                className="text-sm"
+              />
+              <Input
+                placeholder="Short description (optional)"
+                value={item.description}
+                onChange={(e) => update(i, "description", e.target.value)}
+                className="text-sm"
+              />
+            </div>
+            <button type="button" onClick={() => remove(i)} className="mt-1 text-muted-foreground transition-colors hover:text-destructive">
+              <Trash size={14} />
+            </button>
+          </div>
+        ))}
+        <button type="button" onClick={add} className="flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground">
+          <Plus size={14} /> Add resource
+        </button>
+      </div>
+      <FieldDescription>Terms matching content get auto-linked. Generated when using AI Generate.</FieldDescription>
+    </Field>
+  )
+}
+
 export function BlogForm({
-  defaultValues = { title: "", slug: "", content: "", excerpt: "", tags: [], published: false },
+  defaultValues = { title: "", slug: "", content: "", excerpt: "", resources: "", tags: [], published: false },
   onSubmit,
   isPending,
   submitLabel = "Save",
@@ -95,6 +171,8 @@ export function BlogForm({
       form.setValue("excerpt", excerpt)
       const tags = await suggestTags(content)
       if (tags.length) form.setValue("tags", tags)
+      const resources = await generateResources(content)
+      if (resources !== "[]") form.setValue("resources", resources)
     } catch { /* ignore */ }
     setAiLoading(null)
   }
@@ -236,6 +314,14 @@ export function BlogForm({
             <FieldDescription>Shown on blog listing cards.</FieldDescription>
             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </Field>
+        )}
+      />
+
+      <Controller
+        name="resources"
+        control={form.control}
+        render={({ field }) => (
+          <ResourcesField value={field.value} onChange={field.onChange} />
         )}
       />
 

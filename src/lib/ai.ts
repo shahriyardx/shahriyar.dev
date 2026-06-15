@@ -70,6 +70,31 @@ export async function suggestTags(content: string): Promise<string[]> {
   return data.content.split(",").map((t: string) => t.trim()).filter(Boolean)
 }
 
+export async function generateResources(content: string): Promise<string> {
+  const res = await fetch("/api/ai/generate", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      systemPrompt:
+        "Analyze the blog post content and identify key technologies, tools, and concepts mentioned. " +
+        "Return up to 5 items as a JSON array. No markdown, no code blocks, no backticks. " +
+        'Format: [{"term": "React", "url": "https://react.dev", "description": "Official React docs"}]',
+      prompt: content,
+      stream: false,
+    }),
+  })
+
+  if (!res.ok) throw new Error("Failed to generate resources")
+  const data = await res.json()
+  const cleaned = data.content.replace(/^```(?:json)?\s*|\s*```$/g, "").trim()
+  try {
+    const parsed = JSON.parse(cleaned)
+    return Array.isArray(parsed) ? JSON.stringify(parsed.slice(0, 5)) : "[]"
+  } catch {
+    return "[]"
+  }
+}
+
 export async function suggestTitle(topic: string): Promise<string> {
   const res = await fetch("/api/ai/generate", {
     method: "POST",

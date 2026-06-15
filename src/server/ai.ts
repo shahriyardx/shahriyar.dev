@@ -36,11 +36,12 @@ export async function generateTLDR(content: string): Promise<string> {
 
 export async function generateKeyTakeaways(content: string): Promise<string> {
   const text = await callDeepSeek(
-    'Extract 3-5 key takeaways from this blog post. Return as a JSON array of strings, nothing else. Example: ["Takeaway one", "Takeaway two"]',
+    'Extract 3-5 key takeaways from this blog post. Return ONLY valid JSON — a JSON array of strings. No markdown, no code blocks, no backticks. Example: ["Takeaway one", "Takeaway two"]',
     content,
   )
+  const cleaned = text.replace(/^```(?:json)?\s*|\s*```$/g, "").trim()
   try {
-    const parsed = JSON.parse(text)
+    const parsed = JSON.parse(cleaned)
     if (Array.isArray(parsed)) return JSON.stringify(parsed)
   } catch {}
   return text
@@ -59,7 +60,7 @@ export async function generateAutoReplyComment(params: {
     "off-topic, a question already answered in the post, emoji-only, or very low effort. " +
     "If you reply, write 2-4 sentences as the blog author — conversational and helpful. " +
     "Use proper markdown: wrap inline code in backticks, code blocks in triple backticks with language. " +
-    'Respond with valid JSON only: {"shouldReply": boolean, "replyText": "string or empty", "reason": "short justification"}'
+    'Respond with valid JSON only. No markdown, no code blocks, no backticks. {"shouldReply": boolean, "replyText": "string or empty", "reason": "short justification"}'
 
   const prompt =
     `--- BLOG POST TITLE ---\n${params.postTitle}\n\n` +
@@ -67,8 +68,9 @@ export async function generateAutoReplyComment(params: {
     `--- READER COMMENT ---\n${params.commentContent}`
 
   const raw = await callDeepSeek(systemPrompt, prompt)
+  const cleaned = raw.replace(/^```(?:json)?\s*|\s*```$/g, "").trim()
   try {
-    return JSON.parse(raw)
+    return JSON.parse(cleaned)
   } catch {
     return { shouldReply: false, reason: "Failed to parse AI response" }
   }
@@ -80,12 +82,13 @@ export async function generateResources(
   const systemPrompt =
     "You are a technical blog resource curator. Analyze the blog post content and identify the key " +
     "technologies, tools, frameworks, and concepts mentioned. For each, provide the official resource " +
-    "link. Return up to 5 items as a JSON array, nothing else. " +
+    "link. Return up to 5 items as a JSON array. No markdown, no code blocks, no backticks. " +
     'Format: [{"term": "React", "url": "https://react.dev", "description": "Official React docs and guides"}, ...]'
 
   const raw = await callDeepSeek(systemPrompt, content)
+  const cleaned = raw.replace(/^```(?:json)?\s*|\s*```$/g, "").trim()
   try {
-    const parsed = JSON.parse(raw)
+    const parsed = JSON.parse(cleaned)
     if (Array.isArray(parsed)) return parsed.slice(0, 5)
   } catch {}
   return []
