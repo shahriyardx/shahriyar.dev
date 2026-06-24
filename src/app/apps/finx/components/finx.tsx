@@ -21,6 +21,7 @@ import {
   SiTypescript,
 } from "react-icons/si"
 import Link from "next/link"
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { Button } from "@/components/ui/button"
 import { Section, SectionLabel } from "@/components/section"
 import {
@@ -200,23 +201,26 @@ export function Finx() {
               automatic SMS import.
             </p>
           </div>
-          <div className="-mx-6 mt-8 flex snap-x gap-5 overflow-x-auto px-6 pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {screenshots.map((shot) => (
-              <figure
-                key={shot.src}
-                className="w-[230px] shrink-0 snap-start overflow-hidden rounded-[2rem] border bg-muted/30 p-2"
-              >
-                <Image
-                  src={shot.src}
-                  alt={shot.alt}
-                  width={1440}
-                  height={3120}
-                  sizes="230px"
-                  className="h-auto w-full rounded-[1.4rem]"
-                />
-              </figure>
-            ))}
-          </div>
+          <ScrollArea className="-mx-6 mt-8">
+            <div className="flex gap-5 px-6 pb-4">
+              {screenshots.map((shot) => (
+                <figure
+                  key={shot.src}
+                  className="w-[230px] shrink-0 overflow-hidden rounded-[2rem] border bg-muted/30 p-2"
+                >
+                  <Image
+                    src={shot.src}
+                    alt={shot.alt}
+                    width={1440}
+                    height={3120}
+                    sizes="230px"
+                    className="h-auto w-full rounded-[1.4rem]"
+                  />
+                </figure>
+              ))}
+            </div>
+            <ScrollBar orientation="horizontal" />
+          </ScrollArea>
         </Section>
 
         {/* Feature grid */}
