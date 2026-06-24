@@ -1,10 +1,8 @@
 "use client"
 
-import { ArrowUpRight, Code } from "@phosphor-icons/react"
+import Link from "next/link"
 import { trpc } from "@/lib/trpc/client"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
+import { ProjectCard } from "@/components/project-card"
 import { Section } from "@/components/section"
 
 export function FeaturedProjects() {
@@ -24,43 +22,19 @@ export function FeaturedProjects() {
       </div>
 
       <div className="mt-8 grid gap-6 grid-cols-1">
-        {projects.map((project) => (
-          <Card key={project.title} className="group flex flex-col">
-            <CardHeader>
-              <div className="mb-2 flex size-10 items-center justify-center border bg-muted/50">
-                <Code size={18} />
-              </div>
-              <h3 className="text-lg font-semibold tracking-tight">
-                {project.title}
-              </h3>
-            </CardHeader>
-            <CardContent className="flex-1">
-              <p className="text-sm leading-relaxed text-muted-foreground">
-                {project.description}
-              </p>
-            </CardContent>
-            <CardFooter className="flex-row items-center justify-between gap-4">
-              <div className="flex flex-wrap gap-2">
-                {project.tags.map((tag) => (
-                  <Badge key={tag} variant="secondary">
-                    {tag}
-                  </Badge>
-                ))}
-              </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                asChild
-                className="gap-1 shrink-0"
-              >
-                <a href={project.url} target="_blank" rel="noopener noreferrer">
-                  Live site <ArrowUpRight size={14} />
-                </a>
-              </Button>
-            </CardFooter>
-          </Card>
+        {projects.slice(0, 3).map((project) => (
+          <ProjectCard key={project.title} project={project} />
         ))}
       </div>
+
+      {projects.length > 3 && (
+        <Link
+          href="/projects"
+          className="mt-8 inline-flex text-sm text-muted-foreground transition-colors hover:text-foreground"
+        >
+          See all projects →
+        </Link>
+      )}
     </Section>
   )
 }
