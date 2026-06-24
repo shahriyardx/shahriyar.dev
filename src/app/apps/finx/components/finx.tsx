@@ -201,7 +201,7 @@ export function Finx() {
             </p>
           </div>
           <div className="-mx-6 mt-8 flex snap-x gap-5 overflow-x-auto px-6 pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {screenshots.slice(1).map((shot) => (
+            {screenshots.map((shot) => (
               <figure
                 key={shot.src}
                 className="w-[230px] shrink-0 snap-start overflow-hidden rounded-[2rem] border bg-muted/30 p-2"
