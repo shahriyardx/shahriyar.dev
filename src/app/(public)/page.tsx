@@ -7,6 +7,7 @@ import { SkillsPreview } from "@/components/skills-preview"
 import { CTASection } from "@/components/cta-section"
 import { Section } from "@/components/section"
 import { Cmd } from "@/components/terminal"
+import { buildFs } from "@/lib/shell/fs"
 import { apps } from "@/app/apps/apps"
 
 /** Section headings read as shell commands, to match the hero. */
@@ -26,16 +27,31 @@ function CommandHeading({
 }
 
 export default async function Home() {
-  const popular = await prisma.post.findMany({
-    where: { published: true },
-    orderBy: { views: "desc" },
-    take: 3,
-    select: { slug: true, title: true, views: true },
-  })
+  const [popular, allPosts, projects] = await Promise.all([
+    prisma.post.findMany({
+      where: { published: true },
+      orderBy: { views: "desc" },
+      take: 3,
+      select: { slug: true, title: true, views: true },
+    }),
+    prisma.post.findMany({
+      where: { published: true },
+      orderBy: { createdAt: "desc" },
+      select: { slug: true, title: true, excerpt: true, tags: true },
+    }),
+    prisma.project.findMany({
+      where: { published: true },
+      orderBy: { order: "asc" },
+      select: { title: true, description: true, url: true, tags: true },
+    }),
+  ])
+
+  // The shell reads the same data the pages do, so it can never drift.
+  const fs = buildFs({ apps, posts: allPosts, projects })
 
   return (
     <>
-      <TerminalHero />
+      <TerminalHero fs={fs} />
 
       <Section id="apps">
         <CommandHeading cmd="ls ./apps">
