@@ -1,95 +1,128 @@
 import Image from "next/image"
 import Link from "next/link"
-import { DownloadSimple, GithubLogo } from "@phosphor-icons/react/dist/ssr"
-import { Button } from "@/components/ui/button"
 
 export const REPO = "https://github.com/shahriyardx/dx-home"
 export const STORE =
   "https://chromewebstore.google.com/detail/dxhome/gecffmhnbgcpikfhofgpcbddhhfnoffd"
 
-// DxHome brand — the icon's neon blue/violet glow over a midnight surface.
-export const MIDNIGHT = "#0A0E1A"
+// DxHome brand — the icon's neon blue/violet glow.
 export const IRIS = "#6E8BFF"
 export const VIOLET = "#8B5CF6"
 
-export function DxHomeHeader() {
+// Browser UI, not DxHome's own palette — this is the frame around it.
+const UI = "#1F1F23"
+const UI_EDGE = "#35363A"
+const UI_TAB = "#2E2F33"
+const UI_BAR = "#3A3B40"
+
+const tabs = [
+  { href: "/apps/dx-home", label: "New Tab", url: "dxhome://newtab" },
+  {
+    href: "/apps/dx-home/privacy",
+    label: "Privacy",
+    url: "dxhome://privacy",
+  },
+]
+
+/**
+ * The page sits inside a browser window, because the product replaces one.
+ * `active` picks which tab is foregrounded and what the address bar reads.
+ */
+export function BrowserFrame({
+  active,
+  children,
+}: {
+  active: "/apps/dx-home" | "/apps/dx-home/privacy"
+  children: React.ReactNode
+}) {
+  const current = tabs.find((t) => t.href === active) ?? tabs[0]
+
   return (
-    <header className="fixed top-0 z-50 w-full border-b border-[#6E8BFF]/15 bg-[#0A0E1A]/80 backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-6">
-        <Link href="/apps/dx-home" className="flex items-center gap-2.5">
+    <div className="min-h-screen" style={{ backgroundColor: UI }}>
+      <header
+        className="sticky top-0 z-50 border-b"
+        style={{ backgroundColor: UI, borderColor: UI_EDGE }}
+      >
+        {/* Tab strip */}
+        <div className="flex items-end gap-1 px-2 pt-2">
+          {tabs.map((t) => {
+            const isActive = t.href === active
+            return (
+              <Link
+                key={t.href}
+                href={t.href}
+                className="group flex h-9 max-w-[200px] min-w-0 flex-1 items-center gap-2 rounded-t-lg px-3 text-xs transition-colors sm:flex-none sm:min-w-[180px]"
+                style={{
+                  backgroundColor: isActive ? UI_TAB : "transparent",
+                  color: isActive ? "#E8EAED" : "#9AA0A6",
+                }}
+                aria-current={isActive ? "page" : undefined}
+              >
+                <Image
+                  src="/apps/dx-home/favicon.png"
+                  alt=""
+                  width={14}
+                  height={14}
+                  className="size-3.5 shrink-0 rounded-sm"
+                />
+                <span className="truncate">{t.label}</span>
+              </Link>
+            )
+          })}
+          <span
+            className="mb-1 hidden size-6 shrink-0 items-center justify-center rounded text-base sm:flex"
+            style={{ color: "#9AA0A6" }}
+            aria-hidden="true"
+          >
+            +
+          </span>
+        </div>
+
+        {/* Toolbar */}
+        <div
+          className="flex items-center gap-2 px-3 py-2"
+          style={{ backgroundColor: UI_TAB }}
+        >
+          <div
+            className="hidden items-center gap-3 pr-1 text-sm sm:flex"
+            style={{ color: "#9AA0A6" }}
+            aria-hidden="true"
+          >
+            <span>←</span>
+            <span>→</span>
+            <span>⟳</span>
+          </div>
+
+          <div
+            className="flex min-w-0 flex-1 items-center gap-2 rounded-full px-3 py-1.5"
+            style={{ backgroundColor: UI_BAR }}
+          >
+            <span
+              className="text-[10px]"
+              style={{ color: "#9AA0A6" }}
+              aria-hidden="true"
+            >
+              ⌂
+            </span>
+            <span
+              className="truncate font-mono text-xs"
+              style={{ color: "#BDC1C6" }}
+            >
+              {current.url}
+            </span>
+          </div>
+
           <Image
             src="/apps/dx-home/icon.png"
-            alt="DxHome logo"
-            width={28}
-            height={28}
-            className="size-7 rounded-md"
+            alt="DxHome extension icon"
+            width={20}
+            height={20}
+            className="size-5 shrink-0 rounded"
           />
-          <span className="text-sm font-bold tracking-tight text-white">
-            DxHome
-          </span>
-        </Link>
-        <nav className="flex items-center gap-3">
-          <a
-            href={REPO}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="View source on GitHub"
-            className="hidden text-[#6E8BFF]/70 transition-colors hover:text-[#6E8BFF] sm:block"
-          >
-            <GithubLogo size={18} />
-          </a>
-          <Button
-            size="sm"
-            asChild
-            className="bg-[#6E8BFF] text-[#0A0E1A] hover:bg-[#6E8BFF]/90"
-          >
-            <a href={STORE} target="_blank" rel="noopener noreferrer">
-              <DownloadSimple size={14} weight="bold" />
-              Install
-            </a>
-          </Button>
-        </nav>
-      </div>
-    </header>
-  )
-}
-
-export function DxHomeFooter() {
-  return (
-    <footer
-      className="border-t"
-      style={{ backgroundColor: MIDNIGHT, borderColor: "#6E8BFF22" }}
-    >
-      <div className="mx-auto flex max-w-5xl flex-col items-center gap-4 px-6 py-10 text-center sm:flex-row sm:justify-between sm:text-left">
-        <p className="text-sm" style={{ color: `${IRIS}b3` }}>
-          DxHome — a quieter new tab for Chrome and Firefox.
-        </p>
-        <div className="flex items-center gap-5 text-sm">
-          <Link
-            href="/apps/dx-home/privacy"
-            className="text-white/80 transition-colors hover:text-white"
-          >
-            Privacy
-          </Link>
-          <a
-            href={REPO}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1.5 text-white/80 transition-colors hover:text-white"
-          >
-            <GithubLogo size={15} /> Source
-          </a>
-          <a
-            href={STORE}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1.5 transition-opacity hover:opacity-80"
-            style={{ color: IRIS }}
-          >
-            <DownloadSimple size={15} weight="bold" /> Chrome Web Store
-          </a>
         </div>
-      </div>
-    </footer>
+      </header>
+
+      {children}
+    </div>
   )
 }

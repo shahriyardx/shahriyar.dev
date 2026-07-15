@@ -1,9 +1,8 @@
-import { prisma } from "@/lib/prisma"
-import Link from "next/link"
-import { Badge } from "@/components/ui/badge"
-import { Section } from "@/components/section"
-
 import type { Metadata } from "next"
+import Link from "next/link"
+import { prisma } from "@/lib/prisma"
+import { Section } from "@/components/section"
+import { Cmd, PageHeader } from "@/components/terminal"
 
 export const dynamic = "force-dynamic"
 
@@ -11,6 +10,11 @@ export const metadata: Metadata = {
   title: "Blog",
   description: "Thoughts on web development, technology, and building things.",
 }
+
+const clean = (title: string) => title.replace(/^["'“”]+|["'“”]+$/g, "").trim()
+
+const readingTime = (content: string) =>
+  Math.max(1, Math.ceil(content.split(/\s+/).length / 200))
 
 export default async function BlogPage() {
   const posts = await prisma.post.findMany({
@@ -20,67 +24,71 @@ export default async function BlogPage() {
 
   return (
     <Section className="pt-28">
-      <div className="flex flex-col gap-4">
-        <h1 className="text-4xl font-black leading-[0.9] tracking-tight md:text-5xl">
-          Blog
-        </h1>
-        <p className="max-w-lg text-muted-foreground">
-          Thoughts on web development, technology, and building things.
+      <PageHeader cmd="ls -la ./posts" title="Blog">
+        Thoughts on web development, technology, and building things.
+      </PageHeader>
+
+      {posts.length === 0 ? (
+        <p className="mt-12 text-sm text-muted-foreground">
+          No posts yet. Check back soon.
         </p>
-      </div>
+      ) : (
+        <>
+          <p className="mt-10 text-xs text-muted-foreground/60">
+            total {posts.length}
+          </p>
 
-      {posts.length === 0 && (
-        <p className="mt-12 text-sm text-muted-foreground">No posts yet. Check back soon.</p>
-      )}
+          <ul className="mt-2 flex flex-col border-t">
+            {posts.map((post) => (
+              <li key={post.id}>
+                <Link
+                  href={`/blog/${post.slug}`}
+                  className="group flex flex-col gap-2 border-b py-5 transition-colors hover:bg-muted/20 sm:flex-row sm:items-baseline sm:gap-6"
+                >
+                  {/* The `ls -la` gutter: date, then size-as-reading-time */}
+                  <span className="shrink-0 text-xs tabular-nums text-muted-foreground/60 sm:w-28">
+                    {new Date(post.createdAt).toLocaleDateString("en-CA")}
+                  </span>
+                  <span className="hidden shrink-0 text-xs tabular-nums text-muted-foreground/40 sm:block sm:w-16">
+                    {readingTime(post.content)} min
+                  </span>
 
-      <div className="mt-12 grid gap-6">
-        {posts.map((post, i) => (
-          <Link
-            key={post.id}
-            href={`/blog/${post.slug}`}
-            className="group border p-6 transition-all hover:border-foreground/30 hover:bg-muted/20"
-          >
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-6">
-              <span className="hidden font-mono text-sm leading-7 text-muted-foreground/40 sm:block">
-                {String(i + 1).padStart(2, "0")}
-              </span>
-              <div className="flex flex-1 flex-col gap-3">
-                <h2 className="text-xl font-bold tracking-tight transition-colors group-hover:text-muted-foreground md:text-2xl">
-                  {post.title.replace(/^["'“”]+|["'“”]+$/g, "").trim()}
-                </h2>
-                {post.excerpt && (
-                  <p className="leading-relaxed text-muted-foreground line-clamp-2">
-                    {post.excerpt}
-                  </p>
-                )}
-                <div className="flex flex-wrap items-center gap-3">
-                  <span className="text-xs text-muted-foreground">
-                    {new Date(post.createdAt).toLocaleDateString("en-US", {
-                      year: "numeric", month: "long", day: "numeric",
-                    })}
-                  </span>
-                  <span className="text-xs text-muted-foreground/50">·</span>
-                  <span className="text-xs text-muted-foreground">
-                    {Math.max(1, Math.ceil(post.content.split(/\s+/).length / 200))} min read
-                  </span>
-                  {post.tags.length > 0 && (
-                    <>
-                      <span className="text-xs text-muted-foreground/50">·</span>
-                      <div className="flex flex-wrap gap-1.5">
+                  <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+                    <h2 className="font-semibold tracking-tight transition-colors group-hover:text-muted-foreground">
+                      {clean(post.title)}
+                    </h2>
+                    {post.excerpt && (
+                      <p className="line-clamp-1 text-sm text-muted-foreground">
+                        {post.excerpt}
+                      </p>
+                    )}
+                    {post.tags.length > 0 && (
+                      <p className="flex flex-wrap gap-2 text-[11px] text-muted-foreground/50">
                         {post.tags.slice(0, 3).map((tag) => (
-                          <Badge key={tag} variant="secondary" className="text-[10px] px-1.5 py-0">
-                            {tag}
-                          </Badge>
+                          <span key={tag}>#{tag}</span>
                         ))}
-                      </div>
-                    </>
-                  )}
-                </div>
-              </div>
-            </div>
-          </Link>
-        ))}
-      </div>
+                      </p>
+                    )}
+                  </div>
+
+                  <span
+                    className="hidden shrink-0 text-xs text-muted-foreground/30 transition-colors group-hover:text-foreground sm:block"
+                    aria-hidden="true"
+                  >
+                    →
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+
+          <Cmd className="mt-8">
+            <span className="text-muted-foreground/60">
+              {posts.length} file{posts.length === 1 ? "" : "s"} listed
+            </span>
+          </Cmd>
+        </>
+      )}
     </Section>
   )
 }

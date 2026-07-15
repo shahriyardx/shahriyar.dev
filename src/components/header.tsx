@@ -7,10 +7,12 @@ import { List, X, SignOut } from "@phosphor-icons/react"
 import { authClient } from "@/lib/auth-client"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { TerminalLogo } from "@/components/terminal-logo"
 import { cn } from "@/lib/utils"
 
 const navLinks = [
   { href: "/about", label: "About" },
+  { href: "/apps", label: "Apps" },
   { href: "/resume", label: "Resume" },
   { href: "/blog", label: "Blog" },
   { href: "/contact", label: "Contact" },
@@ -41,26 +43,26 @@ export function Header() {
   return (
     <header className="fixed top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-6">
-        <Link
-          href="/"
-          className="text-sm font-medium tracking-tight transition-opacity hover:opacity-70"
-        >
-          shahriyar.dev
-        </Link>
+        <TerminalLogo />
 
         <nav className="hidden items-center gap-8 md:flex">
           {navLinks.map((link) => {
-            const isActive = pathname === link.href || pathname.startsWith(link.href + "/")
+            const isActive =
+              pathname === link.href || pathname.startsWith(link.href + "/")
             return (
               <Link
                 key={link.href}
                 href={link.href}
                 className={cn(
                   "text-sm transition-colors",
-                  isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground",
+                  isActive
+                    ? "text-foreground"
+                    : "text-muted-foreground hover:text-foreground",
                 )}
               >
-                {isActive && <span className="mr-1 text-muted-foreground/30">//</span>}
+                {isActive && (
+                  <span className="mr-1 text-muted-foreground/30">//</span>
+                )}
                 {link.label}
               </Link>
             )
@@ -94,7 +96,8 @@ export function Header() {
           <SheetContent side="right" className="w-64 p-6">
             <nav className="mt-12 flex flex-col gap-6">
               {navLinks.map((link) => {
-                const isActive = pathname === link.href || pathname.startsWith(link.href + "/")
+                const isActive =
+                  pathname === link.href || pathname.startsWith(link.href + "/")
                 return (
                   <Link
                     key={link.href}
@@ -102,10 +105,14 @@ export function Header() {
                     onClick={() => setOpen(false)}
                     className={cn(
                       "text-lg transition-colors",
-                      isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground",
+                      isActive
+                        ? "text-foreground"
+                        : "text-muted-foreground hover:text-foreground",
                     )}
                   >
-                    {isActive && <span className="mr-1 text-muted-foreground/30">//</span>}
+                    {isActive && (
+                      <span className="mr-1 text-muted-foreground/30">//</span>
+                    )}
                     {link.label}
                   </Link>
                 )
@@ -123,7 +130,10 @@ export function Header() {
                 <Button
                   variant="outline"
                   className="mt-4 w-full"
-                  onClick={() => { handleLogout(); setOpen(false) }}
+                  onClick={() => {
+                    handleLogout()
+                    setOpen(false)
+                  }}
                 >
                   <SignOut size={14} className="mr-1" />
                   Logout

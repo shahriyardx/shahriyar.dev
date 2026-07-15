@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { ArrowLeft, ShieldCheck } from "@phosphor-icons/react/dist/ssr"
 import { Section } from "@/components/section"
-import { DxHomeFooter, DxHomeHeader, IRIS, REPO } from "./dx-home-chrome"
+import { BrowserFrame, IRIS, REPO, STORE } from "./dx-home-chrome"
 
 const EFFECTIVE = "15 July 2026"
 
@@ -38,17 +38,15 @@ const permissions = [
 
 export function DxHomePrivacy() {
   return (
-    <>
-      <DxHomeHeader />
-
-      <main id="top">
-        <Section className="pt-28 md:pt-36">
+    <BrowserFrame active="/apps/dx-home/privacy">
+      <main id="top" className="bg-[#0A0E1A]">
+        <Section className="pt-12 md:pt-16">
           <Link
             href="/apps/dx-home"
             className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
             <ArrowLeft size={14} weight="bold" />
-            Back to DxHome
+            Back to the new tab
           </Link>
 
           <div className="mt-8 flex flex-col gap-5">
@@ -252,11 +250,32 @@ export function DxHomePrivacy() {
               </p>
             </Policy>
           </div>
+
+          <div
+            className="mt-14 flex flex-wrap items-center gap-4 border-t pt-8"
+            style={{ borderColor: "#6E8BFF22" }}
+          >
+            <a
+              href={STORE}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-lg px-4 py-2.5 text-sm font-semibold text-[#0A0E1A] transition-opacity hover:opacity-90"
+              style={{ backgroundColor: IRIS }}
+            >
+              Add to Chrome
+            </a>
+            <a
+              href={REPO}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+            >
+              View source
+            </a>
+          </div>
         </Section>
       </main>
-
-      <DxHomeFooter />
-    </>
+    </BrowserFrame>
   )
 }
 

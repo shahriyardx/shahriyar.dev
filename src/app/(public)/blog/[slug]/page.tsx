@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { Badge } from "@/components/ui/badge"
+import { Cmd } from "@/components/terminal"
 import { Markdown } from "@/components/markdown"
 import { Comments } from "@/components/comments"
 import { PostSummary } from "@/components/post-summary"
@@ -50,19 +50,23 @@ export default async function BlogPostPage({ params }: Props) {
     data: { views: { increment: 1 } },
   })
 
-  const readTime = Math.max(1, Math.ceil(post.content.split(/\s+/).length / 200))
+  const readTime = Math.max(
+    1,
+    Math.ceil(post.content.split(/\s+/).length / 200),
+  )
 
-  const related = post.tags.length > 0
-    ? await prisma.post.findMany({
-        where: {
-          published: true,
-          id: { not: post.id },
-          tags: { hasSome: post.tags },
-        },
-        take: 3,
-        orderBy: { createdAt: "desc" },
-      })
-    : []
+  const related =
+    post.tags.length > 0
+      ? await prisma.post.findMany({
+          where: {
+            published: true,
+            id: { not: post.id },
+            tags: { hasSome: post.tags },
+          },
+          take: 3,
+          orderBy: { createdAt: "desc" },
+        })
+      : []
 
   const tocItems = extractTOC(post.content)
 
@@ -73,42 +77,64 @@ export default async function BlogPostPage({ params }: Props) {
         className="mb-8 flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
       >
         <Icon name="ArrowLeft" size={14} />
-        Back to blog
+        cd ../blog
       </Link>
 
       <header className="flex flex-col gap-4">
-        {post.tags.length > 0 && (
-          <div className="flex flex-wrap gap-2">
-            {post.tags.map((tag) => (
-              <Badge key={tag} variant="secondary" className="text-xs">{tag}</Badge>
-            ))}
-          </div>
-        )}
-        <h1 className="text-4xl font-black leading-[0.9] tracking-tight md:text-5xl">
+        <Cmd>cat ./posts/{slug}.md</Cmd>
+
+        <h1 className="text-4xl leading-[0.9] font-black tracking-tight md:text-5xl">
           {post.title.replace(/^["'“”]+|["'“”]+$/g, "").trim()}
         </h1>
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <time dateTime={post.createdAt.toISOString()}>
-            {new Date(post.createdAt).toLocaleDateString("en-US", {
-              year: "numeric", month: "long", day: "numeric",
-            })}
-          </time>
-          <span className="text-muted-foreground/50">·</span>
-          <span>{readTime} min read</span>
-        </div>
+
+        {/* Front matter */}
+        <dl className="flex flex-col gap-1 border-l pl-4 text-xs">
+          <div className="flex gap-2">
+            <dt className="w-14 shrink-0 text-muted-foreground/50">date</dt>
+            <dd className="text-muted-foreground">
+              <time dateTime={post.createdAt.toISOString()}>
+                {new Date(post.createdAt).toLocaleDateString("en-CA")}
+              </time>
+            </dd>
+          </div>
+          <div className="flex gap-2">
+            <dt className="w-14 shrink-0 text-muted-foreground/50">read</dt>
+            <dd className="text-muted-foreground">{readTime} min</dd>
+          </div>
+          <div className="flex gap-2">
+            <dt className="w-14 shrink-0 text-muted-foreground/50">views</dt>
+            <dd className="text-muted-foreground tabular-nums">
+              {post.views + 1}
+            </dd>
+          </div>
+          {post.tags.length > 0 && (
+            <div className="flex gap-2">
+              <dt className="w-14 shrink-0 text-muted-foreground/50">tags</dt>
+              <dd className="flex flex-wrap gap-2 text-muted-foreground">
+                {post.tags.map((tag) => (
+                  <span key={tag}>#{tag}</span>
+                ))}
+              </dd>
+            </div>
+          )}
+        </dl>
       </header>
 
       <PostSummary tldr={post.tldr} keyTakeaways={post.keyTakeaways} />
 
       <div className="mt-12 flex gap-12">
         <div className="min-w-0 flex-1">
-          <Markdown resources={post.resources ?? undefined}>{post.content}</Markdown>
+          <Markdown resources={post.resources ?? undefined}>
+            {post.content}
+          </Markdown>
         </div>
         {(tocItems.length > 0 || post.resources) && (
           <aside className="hidden w-56 shrink-0 lg:block">
             <div className="sticky top-24">
               {tocItems.length > 0 && <TableOfContents items={tocItems} />}
-              {post.resources && <ResourceLinks resources={JSON.parse(post.resources)} />}
+              {post.resources && (
+                <ResourceLinks resources={JSON.parse(post.resources)} />
+              )}
             </div>
           </aside>
         )}
@@ -118,20 +144,34 @@ export default async function BlogPostPage({ params }: Props) {
 
       {related.length > 0 && (
         <div className="mt-20 border-t pt-12">
+          <Cmd className="mb-3">
+            grep -l &quot;#{post.tags[0]}&quot; ./posts/*
+          </Cmd>
           <h2 className="text-2xl font-bold tracking-tight">Related posts</h2>
           <div className="mt-6 grid gap-6 md:grid-cols-3">
             {related.map((r) => (
-              <Link key={r.id} href={`/blog/${r.slug}`} className="group border p-5">
+              <Link
+                key={r.id}
+                href={`/blog/${r.slug}`}
+                className="group border p-5"
+              >
                 <h3 className="font-semibold tracking-tight transition-colors group-hover:text-muted-foreground">
                   {r.title.replace(/^["'“”]+|["'“”]+$/g, "").trim()}
                 </h3>
                 {r.excerpt && (
-                  <p className="mt-2 text-sm text-muted-foreground line-clamp-2">{r.excerpt}</p>
+                  <p className="mt-2 text-sm text-muted-foreground line-clamp-2">
+                    {r.excerpt}
+                  </p>
                 )}
                 <p className="mt-3 text-xs text-muted-foreground">
                   {new Date(r.createdAt).toLocaleDateString("en-US", {
-                    year: "numeric", month: "short", day: "numeric",
-                  })} · {Math.max(1, Math.ceil(r.content.split(/\s+/).length / 200))} min read
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                  })}{" "}
+                  ·{" "}
+                  {Math.max(1, Math.ceil(r.content.split(/\s+/).length / 200))}{" "}
+                  min read
                 </p>
               </Link>
             ))}

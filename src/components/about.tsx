@@ -1,114 +1,143 @@
-import { Section, SectionLabel } from "@/components/section"
+import { Section } from "@/components/section"
+import { Cmd, Pane, PROMPT } from "@/components/terminal"
 
-const highlights = [
-  { label: "Years building", value: "5+" },
-  { label: "Technologies", value: "20+" },
-  { label: "Projects shipped", value: "30+" },
-  { label: "Happy clients", value: "15+" },
+/** The ASCII mark neofetch prints beside the specs. */
+const ASCII = `
+   ▄▄▄▄▄▄▄▄▄▄▄
+  █           █
+  █   ▄▄▄▄▄   █
+  █   █   █   █
+  █   █▄▄▄█   █
+  █           █
+  █   ▄▄▄▄▄   █
+  █           █
+   ▀▀▀▀▀▀▀▀▀▀▀
+`.trim()
+
+const specs: { key: string; value: string }[] = [
+  { key: "user", value: "shahriyar@dev" },
+  { key: "role", value: "Full-stack developer" },
+  { key: "uptime", value: "5+ years building" },
+  { key: "os", value: "Arch Linux (Hyprland)" },
+  { key: "editor", value: "Zed" },
+  { key: "shell", value: "zsh + Oh My Zsh" },
+  { key: "font", value: "Nerd Font" },
+  { key: "browser", value: "Chrome" },
+  { key: "git", value: "GitHub CLI" },
+  { key: "api", value: "Bruno" },
+  { key: "cpu", value: "Ryzen 7 7700" },
+  { key: "gpu", value: "Intel Arc A380" },
+  { key: "display", value: "LG 27UN880" },
+  { key: "input", value: "MCHOSE GX87 · MX Master 4" },
+  { key: "stack", value: "Next.js · TypeScript · Tailwind · Postgres" },
+]
+
+const stats = [
+  { label: "years building", value: "5+" },
+  { label: "technologies", value: "20+" },
+  { label: "projects shipped", value: "30+" },
+  { label: "happy clients", value: "15+" },
+]
+
+/** The colour bar neofetch ends on. */
+const SWATCHES = [
+  "#F87171",
+  "#FBBF24",
+  "#4ADE80",
+  "#38BDF8",
+  "#818CF8",
+  "#C084FC",
+  "#F472B6",
+  "#E7E7F5",
 ]
 
 export function About() {
   return (
     <Section id="about">
-      <SectionLabel>About</SectionLabel>
-      <div className="grid gap-12 md:grid-cols-2 md:gap-16">
-        <div className="flex flex-col gap-6">
-          <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
-            Passionate about building things that matter
-          </h2>
-          <p className="text-muted-foreground leading-relaxed">
-            I&apos;m a full-stack developer with deep experience in React,
-            Next.js, and modern TypeScript ecosystems. I focus on building fast,
-            accessible, and maintainable web applications.
-          </p>
-          <p className="text-muted-foreground leading-relaxed">
-            When I&apos;m not coding, I explore new technologies, contribute to
-            open source, and write about what I learn.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          {highlights.map((h) => (
-            <div key={h.label} className="flex flex-col gap-1 border p-5">
-              <span className="text-3xl font-bold">{h.value}</span>
-              <span className="text-xs text-muted-foreground">{h.label}</span>
-            </div>
-          ))}
-        </div>
+      <div className="flex flex-col gap-4">
+        <Cmd>cat ./about.md</Cmd>
+        <h1 className="text-[clamp(2rem,6vw,3.25rem)] leading-[0.95] font-black tracking-tight">
+          Passionate about building
+          <br />
+          things that matter
+        </h1>
       </div>
 
-      <div className="mt-20 grid gap-12 md:grid-cols-2">
-        <div>
-          <SectionLabel>Editor & Terminal</SectionLabel>
-          <div className="flex flex-col gap-3">
-            <div className="border-l-2 px-4">
-              <p className="text-sm font-medium">Editor</p>
-              <p className="text-sm text-muted-foreground">Zed</p>
-            </div>
-            <div className="border-l-2 px-4">
-              <p className="text-sm font-medium">Terminal</p>
-              <p className="text-sm text-muted-foreground">Oh My Zsh</p>
-            </div>
-            <div className="border-l-2 px-4">
-              <p className="text-sm font-medium">Font</p>
-              <p className="text-sm text-muted-foreground">Nerd Font</p>
-            </div>
+      <div className="mt-8 flex max-w-2xl flex-col gap-4 leading-relaxed text-muted-foreground">
+        <p>
+          I&apos;m a full-stack developer with deep experience in React, Next.js
+          and modern TypeScript ecosystems. I focus on building fast,
+          accessible, maintainable web applications.
+        </p>
+        <p>
+          When I&apos;m not coding, I explore new technologies, contribute to
+          open source, and write about what I learn.
+        </p>
+      </div>
+
+      {/* neofetch */}
+      <div className="mt-16 flex flex-col gap-4">
+        <Cmd>neofetch</Cmd>
+        <Pane title="shahriyar@dev — ~ — zsh">
+          <div className="flex flex-col gap-8 md:flex-row md:gap-10">
+            <pre
+              aria-hidden="true"
+              className="shrink-0 text-[10px] leading-[1.15] md:text-xs"
+              style={{ color: PROMPT }}
+            >
+              <code>{ASCII}</code>
+            </pre>
+
+            <dl className="min-w-0 flex-1 text-sm">
+              <div className="mb-2">
+                <span className="font-semibold" style={{ color: PROMPT }}>
+                  shahriyar
+                </span>
+                <span className="text-muted-foreground">@</span>
+                <span className="font-semibold" style={{ color: PROMPT }}>
+                  dev
+                </span>
+                <p className="text-muted-foreground/40">—————————————</p>
+              </div>
+
+              {specs.map((s) => (
+                <div key={s.key} className="flex gap-2 py-[3px]">
+                  <dt
+                    className="w-16 shrink-0 font-semibold"
+                    style={{ color: PROMPT }}
+                  >
+                    {s.key}
+                  </dt>
+                  <dd className="min-w-0 text-muted-foreground">{s.value}</dd>
+                </div>
+              ))}
+
+              <div className="mt-4 flex" aria-hidden="true">
+                {SWATCHES.map((c) => (
+                  <span
+                    key={c}
+                    className="h-4 w-6"
+                    style={{ backgroundColor: c }}
+                  />
+                ))}
+              </div>
+            </dl>
           </div>
-        </div>
-        <div>
-          <SectionLabel>Hardware</SectionLabel>
-          <div className="flex flex-col gap-3">
-            <div className="border-l-2 px-4">
-              <p className="text-sm font-medium">PC</p>
-              <p className="text-sm text-muted-foreground">Ryzen 7 7700 · Arc A380</p>
+        </Pane>
+      </div>
+
+      {/* Stats, as command output */}
+      <div className="mt-16 flex flex-col gap-4">
+        <Cmd>wc -l ./career</Cmd>
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+          {stats.map((s) => (
+            <div key={s.label} className="flex flex-col gap-1 border p-5">
+              <span className="text-3xl font-black tabular-nums">
+                {s.value}
+              </span>
+              <span className="text-xs text-muted-foreground">{s.label}</span>
             </div>
-            <div className="border-l-2 px-4">
-              <p className="text-sm font-medium">Monitor</p>
-              <p className="text-sm text-muted-foreground">LG 27UN880</p>
-            </div>
-            <div className="border-l-2 px-4">
-              <p className="text-sm font-medium">Keyboard & Mouse</p>
-              <p className="text-sm text-muted-foreground">MCHOSE GX87 · MX Master 4</p>
-            </div>
-          </div>
-        </div>
-        <div>
-          <SectionLabel>Software</SectionLabel>
-          <div className="flex flex-col gap-3">
-            <div className="border-l-2 px-4">
-              <p className="text-sm font-medium">Browser</p>
-              <p className="text-sm text-muted-foreground">Chrome</p>
-            </div>
-            <div className="border-l-2 px-4">
-              <p className="text-sm font-medium">Git</p>
-              <p className="text-sm text-muted-foreground">GitHub CLI</p>
-            </div>
-            <div className="border-l-2 px-4">
-              <p className="text-sm font-medium">API Client</p>
-              <p className="text-sm text-muted-foreground">Bruno</p>
-            </div>
-          </div>
-        </div>
-        <div>
-          <SectionLabel>Stack</SectionLabel>
-          <div className="flex flex-col gap-3">
-            <div className="border-l-2 px-4">
-              <p className="text-sm font-medium">Framework</p>
-              <p className="text-sm text-muted-foreground">Next.js + TypeScript</p>
-            </div>
-            <div className="border-l-2 px-4">
-              <p className="text-sm font-medium">Styling</p>
-              <p className="text-sm text-muted-foreground">Tailwind CSS v4 + shadcn/ui</p>
-            </div>
-            <div className="border-l-2 px-4">
-              <p className="text-sm font-medium">Database</p>
-              <p className="text-sm text-muted-foreground">PostgreSQL + Prisma</p>
-            </div>
-            <div className="border-l-2 px-4">
-              <p className="text-sm font-medium">OS</p>
-              <p className="text-sm text-muted-foreground">Arch Linux (Hyprland)</p>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
     </Section>

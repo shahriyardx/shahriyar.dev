@@ -4,6 +4,7 @@ import Link from "next/link"
 import { trpc } from "@/lib/trpc/client"
 import { ProjectCard } from "@/components/project-card"
 import { Section } from "@/components/section"
+import { Cmd } from "@/components/terminal"
 
 export function FeaturedProjects() {
   const { data: projects = [] } = trpc.project.list.useQuery()
@@ -13,6 +14,7 @@ export function FeaturedProjects() {
   return (
     <Section id="projects">
       <div className="flex flex-col gap-4">
+        <Cmd>ls ./projects | head -3</Cmd>
         <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
           Recent work
         </h2>
