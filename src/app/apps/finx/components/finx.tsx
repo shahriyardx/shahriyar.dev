@@ -206,7 +206,7 @@ export function Finx() {
               {screenshots.map((shot) => (
                 <figure
                   key={shot.src}
-                  className="w-[230px] shrink-0 overflow-hidden rounded-[2rem] border bg-muted/30 p-2"
+                  className="w-57 shrink-0 overflow-hidden rounded-[2rem] border bg-muted/30 p-2"
                 >
                   <Image
                     src={shot.src}
