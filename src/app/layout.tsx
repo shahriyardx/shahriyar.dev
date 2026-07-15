@@ -1,10 +1,14 @@
 import type { Metadata } from "next"
 import { Geist, Geist_Mono, JetBrains_Mono } from "next/font/google"
+import { GoogleAnalytics } from "@next/third-parties/google"
 import "./globals.css"
 import { cn } from "@/lib/utils"
 import { Toaster } from "@/components/ui/sonner"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { TRPCProvider } from "@/lib/trpc/provider"
+
+/** GA4 measurement ID. Public by design — it ships in the page either way. */
+const GA_ID = "G-V0VJLSW7JB"
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
@@ -63,6 +67,10 @@ export default function RootLayout({
           <Toaster />
         </TRPCProvider>
       </body>
+      {/* Production only — otherwise local page views land in the real report. */}
+      {process.env.NODE_ENV === "production" && (
+        <GoogleAnalytics gaId={GA_ID} />
+      )}
     </html>
   )
 }
