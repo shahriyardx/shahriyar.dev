@@ -1,18 +1,6 @@
+import Image from "next/image"
 import { Section } from "@/components/section"
 import { Cmd, Pane, PROMPT } from "@/components/terminal"
-
-/** The ASCII mark neofetch prints beside the specs. */
-const ASCII = `
-   ▄▄▄▄▄▄▄▄▄▄▄
-  █           █
-  █   ▄▄▄▄▄   █
-  █   █   █   █
-  █   █▄▄▄█   █
-  █           █
-  █   ▄▄▄▄▄   █
-  █           █
-   ▀▀▀▀▀▀▀▀▀▀▀
-`.trim()
 
 const specs: { key: string; value: string }[] = [
   { key: "user", value: "shahriyar@dev" },
@@ -80,13 +68,16 @@ export function About() {
         <Cmd>neofetch</Cmd>
         <Pane title="shahriyar@dev — ~ — zsh">
           <div className="flex flex-col gap-8 md:flex-row md:gap-10">
-            <pre
-              aria-hidden="true"
-              className="shrink-0 text-[10px] leading-[1.15] md:text-xs"
-              style={{ color: PROMPT }}
-            >
-              <code>{ASCII}</code>
-            </pre>
+            {/* neofetch prints a logo here; this is the real one, drawn from
+                the photo and animated on load. */}
+            <Image
+              src="/portrait.svg"
+              alt="Md Shahriyar Alam, drawn as dotted line art"
+              width={624}
+              height={624}
+              unoptimized
+              className="w-40 shrink-0 self-center text-foreground md:w-48 md:self-start"
+            />
 
             <dl className="min-w-0 flex-1 text-sm">
               <div className="mb-2">
