@@ -21,6 +21,10 @@ function LoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const callbackURL = searchParams.get("callbackURL") ?? "/admin"
+  // Only the dashboard/admin flows get the admin framing; readers signing in
+  // to comment see a plain public login.
+  const isAdminLogin =
+    callbackURL.startsWith("/admin") || callbackURL.startsWith("/dashboard")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
 
@@ -47,9 +51,13 @@ function LoginForm() {
     <Section className="flex min-h-screen items-center justify-center pt-28">
       <div className="flex w-full max-w-sm flex-col items-center gap-6 text-center">
         <div className="flex flex-col gap-2">
-          <h1 className="text-2xl font-bold tracking-tight">Admin login</h1>
+          <h1 className="text-2xl font-medium tracking-tight">
+            {isAdminLogin ? "Admin login" : "Sign in"}
+          </h1>
           <p className="text-sm text-muted-foreground">
-            Sign in with GitHub to access the dashboard.
+            {isAdminLogin
+              ? "Sign in with GitHub to access the dashboard."
+              : "Sign in with GitHub to join the conversation."}
           </p>
         </div>
 
