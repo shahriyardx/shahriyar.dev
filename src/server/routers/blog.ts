@@ -1,6 +1,6 @@
 import { z } from "zod"
 import { prisma } from "@/lib/prisma"
-import { publicProcedure, router } from "@/server/trpc"
+import { adminProcedure, publicProcedure, router } from "@/server/trpc"
 import { generateTLDR, generateKeyTakeaways } from "@/server/ai"
 
 function generateSummary(postId: string, content: string) {
@@ -19,7 +19,8 @@ function generateSummary(postId: string, content: string) {
 }
 
 export const blogRouter = router({
-  list: publicProcedure.query(async () => {
+  // Includes drafts, so admin-only; public pages use listPublished/bySlug.
+  list: adminProcedure.query(async () => {
     return prisma.post.findMany({ orderBy: { createdAt: "desc" } })
   }),
 
@@ -36,7 +37,7 @@ export const blogRouter = router({
       return prisma.post.findUnique({ where: { slug: input.slug } })
     }),
 
-  create: publicProcedure
+  create: adminProcedure
     .input(
       z.object({
         title: z.string().min(1),
@@ -54,7 +55,7 @@ export const blogRouter = router({
       return post
     }),
 
-  update: publicProcedure
+  update: adminProcedure
     .input(
       z.object({
         id: z.string(),
@@ -84,7 +85,7 @@ export const blogRouter = router({
       return { success: true }
     }),
 
-  delete: publicProcedure
+  delete: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ input }) => {
       await prisma.post.delete({ where: { id: input.id } })

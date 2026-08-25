@@ -1,13 +1,13 @@
 import { z } from "zod"
 import { prisma } from "@/lib/prisma"
-import { publicProcedure, router } from "@/server/trpc"
+import { adminProcedure, publicProcedure, router } from "@/server/trpc"
 
 export const projectRouter = router({
   list: publicProcedure.query(async () => {
     return prisma.project.findMany({ orderBy: { createdAt: "desc" } })
   }),
 
-  create: publicProcedure
+  create: adminProcedure
     .input(
       z.object({
         title: z.string().min(1),
@@ -27,7 +27,7 @@ export const projectRouter = router({
       })
     }),
 
-  update: publicProcedure
+  update: adminProcedure
     .input(
       z.object({
         id: z.string(),
@@ -42,7 +42,7 @@ export const projectRouter = router({
       return prisma.project.update({ where: { id }, data })
     }),
 
-  delete: publicProcedure
+  delete: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ input }) => {
       await prisma.project.delete({ where: { id: input.id } })

@@ -207,7 +207,7 @@ export function Comments({ postId, postSlug }: Props) {
     setSubmitting(true)
     setError("")
     try {
-      await createComment.mutateAsync({ content: content.trim(), userId: user.id, postId })
+      await createComment.mutateAsync({ content: content.trim(), postId })
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to post comment")
     } finally {
@@ -220,7 +220,7 @@ export function Comments({ postId, postSlug }: Props) {
     setReplySubmitting(true)
     setReplyError("")
     try {
-      await createComment.mutateAsync({ content: replyContent.trim(), userId: user.id, postId, parentId })
+      await createComment.mutateAsync({ content: replyContent.trim(), postId, parentId })
       setReplyContent("")
       setReplyTo(null)
     } catch (e) {
@@ -234,7 +234,7 @@ export function Comments({ postId, postSlug }: Props) {
     if (!user || deleting) return
     setDeleting(commentId)
     try {
-      await deleteComment.mutateAsync({ commentId, userId: user.id })
+      await deleteComment.mutateAsync({ commentId })
     } finally {
       setDeleting(null)
     }

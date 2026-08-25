@@ -1,6 +1,6 @@
 import { z } from "zod"
 import { prisma } from "@/lib/prisma"
-import { publicProcedure, router } from "@/server/trpc"
+import { protectedProcedure, publicProcedure, router } from "@/server/trpc"
 import { callDeepSeek, generateAutoReplyComment } from "@/server/ai"
 
 async function moderateComment(content: string): Promise<{ safe: boolean; reason?: string }> {
@@ -77,16 +77,15 @@ export const commentRouter = router({
       return comments
     }),
 
-  create: publicProcedure
+  create: protectedProcedure
     .input(
       z.object({
         content: z.string().min(1).max(1000),
-        userId: z.string().optional(),
         postId: z.string(),
         parentId: z.string().optional(),
       }),
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ ctx, input }) => {
       const verdict = await moderateComment(input.content)
       if (!verdict.safe) {
         throw new Error(verdict.reason ?? "Comment rejected by moderation")
@@ -95,7 +94,7 @@ export const commentRouter = router({
       const comment = await prisma.comment.create({
         data: {
           content: input.content,
-          userId: input.userId,
+          userId: ctx.session.user.id,
           postId: input.postId,
           parentId: input.parentId,
         },
@@ -116,23 +115,18 @@ export const commentRouter = router({
       return { comment, aiReply }
     }),
 
-  delete: publicProcedure
-    .input(z.object({ commentId: z.string(), userId: z.string() }))
-    .mutation(async ({ input }) => {
+  delete: protectedProcedure
+    .input(z.object({ commentId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
       const comment = await prisma.comment.findUnique({
         where: { id: input.commentId },
         select: { userId: true },
       })
       if (!comment) throw new Error("Comment not found")
 
-      const user = await prisma.user.findUnique({
-        where: { id: input.userId },
-        select: { role: true },
-      })
-      if (!user) throw new Error("User not found")
-
-      const isOwner = comment.userId === input.userId
-      const isAdmin = user.role === "admin"
+      const sessionUser = ctx.session.user as { id: string; role?: string }
+      const isOwner = comment.userId === sessionUser.id
+      const isAdmin = sessionUser.role === "admin"
       if (!isOwner && !isAdmin) throw new Error("Not authorized")
 
       await prisma.comment.delete({ where: { id: input.commentId } })

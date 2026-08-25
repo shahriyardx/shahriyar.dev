@@ -19,11 +19,10 @@ export const auth = betterAuth({
     user: {
       create: {
         before: async (user) => {
+          // First account ever becomes the admin; everyone after signs up
+          // as a regular user (needed for blog comments).
           const count = await prisma.user.count()
-          if (count >= 1) {
-            throw new Error("Only one admin account allowed")
-          }
-          return { data: { ...user, role: "admin" } }
+          return { data: { ...user, role: count === 0 ? "admin" : "user" } }
         },
       },
     },
