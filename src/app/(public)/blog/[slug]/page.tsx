@@ -2,7 +2,6 @@ import type { Metadata } from "next"
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { Cmd } from "@/components/terminal"
 import { Markdown } from "@/components/markdown"
 import { Comments } from "@/components/comments"
 import { PostSummary } from "@/components/post-summary"
@@ -77,47 +76,33 @@ export default async function BlogPostPage({ params }: Props) {
         className="mb-8 flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
       >
         <Icon name="ArrowLeft" size={14} />
-        cd ../blog
+        Back to blog
       </Link>
 
       <header className="flex flex-col gap-4">
-        <Cmd>cat ./posts/{slug}.md</Cmd>
-
-        <h1 className="text-4xl leading-[0.9] font-black tracking-tight md:text-5xl">
+        <h1 className="text-3xl leading-tight font-medium tracking-tight text-balance md:text-4xl">
           {post.title.replace(/^["'“”]+|["'“”]+$/g, "").trim()}
         </h1>
 
-        {/* Front matter */}
-        <dl className="flex flex-col gap-1 border-l pl-4 text-xs">
-          <div className="flex gap-2">
-            <dt className="w-14 shrink-0 text-muted-foreground/50">date</dt>
-            <dd className="text-muted-foreground">
-              <time dateTime={post.createdAt.toISOString()}>
-                {new Date(post.createdAt).toLocaleDateString("en-CA")}
-              </time>
-            </dd>
-          </div>
-          <div className="flex gap-2">
-            <dt className="w-14 shrink-0 text-muted-foreground/50">read</dt>
-            <dd className="text-muted-foreground">{readTime} min</dd>
-          </div>
-          <div className="flex gap-2">
-            <dt className="w-14 shrink-0 text-muted-foreground/50">views</dt>
-            <dd className="text-muted-foreground tabular-nums">
-              {post.views + 1}
-            </dd>
-          </div>
+        <p className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-xs text-muted-foreground">
+          <time dateTime={post.createdAt.toISOString()}>
+            {new Date(post.createdAt).toLocaleDateString("en-CA")}
+          </time>
+          <span aria-hidden="true">·</span>
+          <span>{readTime} min read</span>
+          <span aria-hidden="true">·</span>
+          <span className="tabular-nums">{post.views + 1} views</span>
           {post.tags.length > 0 && (
-            <div className="flex gap-2">
-              <dt className="w-14 shrink-0 text-muted-foreground/50">tags</dt>
-              <dd className="flex flex-wrap gap-2 text-muted-foreground">
-                {post.tags.map((tag) => (
-                  <span key={tag}>#{tag}</span>
-                ))}
-              </dd>
-            </div>
+            <>
+              <span aria-hidden="true">·</span>
+              {post.tags.map((tag) => (
+                <span key={tag} className="text-muted-foreground/60">
+                  {tag}
+                </span>
+              ))}
+            </>
           )}
-        </dl>
+        </p>
       </header>
 
       <PostSummary tldr={post.tldr} keyTakeaways={post.keyTakeaways} />
@@ -144,10 +129,7 @@ export default async function BlogPostPage({ params }: Props) {
 
       {related.length > 0 && (
         <div className="mt-20 border-t pt-12">
-          <Cmd className="mb-3">
-            grep -l &quot;#{post.tags[0]}&quot; ./posts/*
-          </Cmd>
-          <h2 className="text-2xl font-bold tracking-tight">Related posts</h2>
+          <h2 className="text-2xl font-medium tracking-tight">Related posts</h2>
           <div className="mt-6 grid gap-6 md:grid-cols-3">
             {related.map((r) => (
               <Link
@@ -155,7 +137,7 @@ export default async function BlogPostPage({ params }: Props) {
                 href={`/blog/${r.slug}`}
                 className="group border p-5"
               >
-                <h3 className="font-semibold tracking-tight transition-colors group-hover:text-muted-foreground">
+                <h3 className="font-sans font-semibold tracking-tight transition-colors group-hover:text-muted-foreground">
                   {r.title.replace(/^["'“”]+|["'“”]+$/g, "").trim()}
                 </h3>
                 {r.excerpt && (

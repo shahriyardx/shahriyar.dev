@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { Geist, Geist_Mono, JetBrains_Mono } from "next/font/google"
+import { Geist, Geist_Mono, Newsreader } from "next/font/google"
 import { GoogleAnalytics } from "@next/third-parties/google"
 import "./globals.css"
 import { cn } from "@/lib/utils"
@@ -10,9 +10,10 @@ import { TRPCProvider } from "@/lib/trpc/provider"
 /** GA4 measurement ID. Public by design — it ships in the page either way. */
 const GA_ID = "G-V0VJLSW7JB"
 
-const jetbrainsMono = JetBrains_Mono({
+const newsreader = Newsreader({
   subsets: ["latin"],
-  variable: "--font-mono",
+  style: ["normal", "italic"],
+  variable: "--font-newsreader",
 })
 
 const geistSans = Geist({
@@ -56,8 +57,8 @@ export default function RootLayout({
         "antialiased",
         geistSans.variable,
         geistMono.variable,
-        "font-mono",
-        jetbrainsMono.variable,
+        "font-sans",
+        newsreader.variable,
       )}
       style={{ colorScheme: "dark" }}
     >

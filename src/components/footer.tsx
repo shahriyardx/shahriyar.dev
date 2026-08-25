@@ -13,22 +13,12 @@ const socialLinks = [
   { icon: XLogo, href: "https://x.com/shahriyardx", label: "X" },
 ]
 
-const PROMPT = "#4ADE80"
-
 export function Footer() {
   return (
     <footer className="border-t border-border/40">
       <div className="mx-auto max-w-5xl px-6 py-10">
-        <p className="text-sm">
-          <span style={{ color: PROMPT }} aria-hidden="true">
-            ❯{" "}
-          </span>
-          <span className="text-muted-foreground">exit</span>
-        </p>
-
-        <div className="mt-6 flex flex-col items-start gap-6 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col items-start gap-6 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-xs text-muted-foreground">
-            <span className="text-muted-foreground/50"># </span>
             &copy; {new Date().getFullYear()} shahriyar.dev — built with
             Next.js, deployed on a whim.
           </p>

@@ -7,7 +7,6 @@ import { List, X, SignOut } from "@phosphor-icons/react"
 import { authClient } from "@/lib/auth-client"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { TerminalLogo } from "@/components/terminal-logo"
 import { cn } from "@/lib/utils"
 
 const navLinks = [
@@ -43,7 +42,9 @@ export function Header() {
   return (
     <header className="fixed top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-6">
-        <TerminalLogo />
+        <Link href="/" className="text-sm font-medium tracking-tight">
+          shahriyar.dev
+        </Link>
 
         <nav className="hidden items-center gap-8 md:flex">
           {navLinks.map((link) => {
@@ -60,9 +61,6 @@ export function Header() {
                     : "text-muted-foreground hover:text-foreground",
                 )}
               >
-                {isActive && (
-                  <span className="mr-1 text-muted-foreground/30">//</span>
-                )}
                 {link.label}
               </Link>
             )
@@ -110,9 +108,6 @@ export function Header() {
                         : "text-muted-foreground hover:text-foreground",
                     )}
                   >
-                    {isActive && (
-                      <span className="mr-1 text-muted-foreground/30">//</span>
-                    )}
                     {link.label}
                   </Link>
                 )

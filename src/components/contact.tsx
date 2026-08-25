@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Section } from "@/components/section"
-import { Cmd, Pane, PROMPT } from "@/components/terminal"
+import { PageHeader } from "@/components/page-header"
 
 const socialLinks = [
   { icon: GithubLogo, href: "https://github.com/shahriyardx", label: "GitHub" },
@@ -24,22 +24,16 @@ const socialLinks = [
   { icon: XLogo, href: "https://x.com/shahriyardx", label: "X" },
 ]
 
-/** Field label styled as a flag being passed to `mail`. */
-function Flag({
+function FieldLabel({
   htmlFor,
-  flag,
   children,
 }: {
   htmlFor: string
-  flag: string
   children: React.ReactNode
 }) {
   return (
-    <label htmlFor={htmlFor} className="flex items-baseline gap-2 text-xs">
-      <span style={{ color: PROMPT }} className="font-semibold">
-        {flag}
-      </span>
-      <span className="text-muted-foreground">{children}</span>
+    <label htmlFor={htmlFor} className="text-xs text-muted-foreground">
+      {children}
     </label>
   )
 }
@@ -66,29 +60,17 @@ export function Contact() {
 
   return (
     <Section id="contact">
-      <div className="flex flex-col gap-4">
-        <Cmd>mail -s &quot;hello&quot; shahriyar@dev</Cmd>
-        <h1 className="text-[clamp(2rem,6vw,3.25rem)] leading-[0.95] font-black tracking-tight">
-          Let&apos;s work together
-        </h1>
-        <p className="max-w-lg text-muted-foreground">
-          Have a project in mind or just want to chat? Drop me a message and
-          I&apos;ll get back to you as soon as possible.
-        </p>
-      </div>
+      <PageHeader eyebrow="Contact" title="Let's work together">
+        Have a project in mind or just want to chat? Drop me a message and
+        I&apos;ll get back to you as soon as possible.
+      </PageHeader>
 
       <div className="mt-10 grid gap-8 lg:grid-cols-[1.4fr_1fr] lg:gap-12">
         {/* Composer */}
-        <Pane title="compose — mail — zsh">
+        <div className="border p-5 md:p-6">
           {sent ? (
             <div className="flex flex-col gap-2 text-sm">
-              <p>
-                <span style={{ color: PROMPT }} aria-hidden="true">
-                  ❯{" "}
-                </span>
-                mail -s &quot;hello&quot; shahriyar@dev
-              </p>
-              <p style={{ color: PROMPT }}>Message sent. Exit status 0.</p>
+              <p className="font-medium">Message sent.</p>
               <p className="text-muted-foreground">
                 Thanks for reaching out — I&apos;ll get back to you soon.
               </p>
@@ -105,9 +87,7 @@ export function Contact() {
             <form onSubmit={handleSubmit} className="flex flex-col gap-5">
               <div className="grid gap-5 sm:grid-cols-2">
                 <div className="flex flex-col gap-2">
-                  <Flag htmlFor="name" flag="--from">
-                    your name
-                  </Flag>
+                  <FieldLabel htmlFor="name">Your name</FieldLabel>
                   <Input
                     id="name"
                     value={name}
@@ -118,9 +98,7 @@ export function Contact() {
                   />
                 </div>
                 <div className="flex flex-col gap-2">
-                  <Flag htmlFor="email" flag="--reply-to">
-                    your email
-                  </Flag>
+                  <FieldLabel htmlFor="email">Your email</FieldLabel>
                   <Input
                     id="email"
                     type="email"
@@ -134,9 +112,9 @@ export function Contact() {
               </div>
 
               <div className="flex flex-col gap-2">
-                <Flag htmlFor="message" flag="--body">
-                  what&apos;s on your mind
-                </Flag>
+                <FieldLabel htmlFor="message">
+                  What&apos;s on your mind
+                </FieldLabel>
                 <Textarea
                   id="message"
                   value={message}
@@ -157,23 +135,22 @@ export function Contact() {
               </Button>
 
               {send.isError && (
-                <p className="text-sm text-[#F87171]">
-                  mail: delivery failed — please try again.
+                <p className="text-sm text-destructive">
+                  Delivery failed — please try again.
                 </p>
               )}
             </form>
           )}
-        </Pane>
+        </div>
 
         {/* Contact card */}
         <div className="flex flex-col gap-4">
-          <Cmd>cat ./contact.txt</Cmd>
           <div className="flex flex-col gap-4 border p-5">
             <a
               href="mailto:hello@shahriyar.dev"
               className="flex items-center gap-2 text-sm transition-colors hover:text-muted-foreground"
             >
-              <Envelope size={14} style={{ color: PROMPT }} />
+              <Envelope size={14} />
               hello@shahriyar.dev
             </a>
 
@@ -196,7 +173,7 @@ export function Contact() {
           </div>
 
           <p className="text-xs text-muted-foreground/60">
-            # usually replies within a day
+            Usually replies within a day.
           </p>
         </div>
       </div>
