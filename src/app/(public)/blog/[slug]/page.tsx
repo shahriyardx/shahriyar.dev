@@ -73,41 +73,33 @@ export default async function BlogPostPage({ params }: Props) {
     <article className="mx-auto max-w-5xl px-6 pt-28 pb-20">
       <Link
         href="/blog"
-        className="mb-8 flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
+        className="mb-10 flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
       >
         <Icon name="ArrowLeft" size={14} />
         Back to blog
       </Link>
 
-      <header className="flex flex-col gap-4">
+      <header className="flex max-w-3xl flex-col gap-5">
         <h1 className="text-3xl leading-tight font-medium tracking-tight text-balance md:text-4xl">
           {post.title.replace(/^["'“”]+|["'“”]+$/g, "").trim()}
         </h1>
 
-        <p className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-xs text-muted-foreground">
+        <p className="font-mono text-xs text-muted-foreground">
           <time dateTime={post.createdAt.toISOString()}>
-            {new Date(post.createdAt).toLocaleDateString("en-CA")}
+            {new Date(post.createdAt).toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+            })}
           </time>
-          <span aria-hidden="true">·</span>
+          <span aria-hidden="true"> · </span>
           <span>{readTime} min read</span>
-          <span aria-hidden="true">·</span>
-          <span className="tabular-nums">{post.views + 1} views</span>
-          {post.tags.length > 0 && (
-            <>
-              <span aria-hidden="true">·</span>
-              {post.tags.map((tag) => (
-                <span key={tag} className="text-muted-foreground/60">
-                  {tag}
-                </span>
-              ))}
-            </>
-          )}
         </p>
       </header>
 
       <PostSummary tldr={post.tldr} keyTakeaways={post.keyTakeaways} />
 
-      <div className="mt-12 flex gap-12">
+      <div className="mt-14 flex gap-12">
         <div className="min-w-0 flex-1">
           <Markdown resources={post.resources ?? undefined}>
             {post.content}
@@ -125,11 +117,19 @@ export default async function BlogPostPage({ params }: Props) {
         )}
       </div>
 
+      {post.tags.length > 0 && (
+        <p className="mt-12 flex flex-wrap gap-x-4 gap-y-1 font-mono text-xs text-muted-foreground/60">
+          {post.tags.map((tag) => (
+            <span key={tag}>{tag}</span>
+          ))}
+        </p>
+      )}
+
       <Comments postId={post.id} postSlug={slug} />
 
       {related.length > 0 && (
         <div className="mt-20 border-t pt-12">
-          <h2 className="text-2xl font-medium tracking-tight">Related posts</h2>
+          <h2 className="text-xl font-medium tracking-tight">Related posts</h2>
           <div className="mt-6 grid gap-6 md:grid-cols-3">
             {related.map((r) => (
               <Link

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { ChatDots, Robot } from "@phosphor-icons/react"
+import { Robot } from "@phosphor-icons/react"
 import { authClient } from "@/lib/auth-client"
 import { trpc } from "@/lib/trpc/client"
 import type { inferRouterOutputs } from "@trpc/server"
@@ -241,16 +241,13 @@ export function Comments({ postId, postSlug }: Props) {
   }
 
   return (
-    <div className="mt-20 border-t pt-12">
-      <div className="flex items-center gap-2">
-        <ChatDots size={20} weight="bold" />
-        <h2 className="text-2xl font-bold tracking-tight">
-          Comments{totalComments > 0 ? ` (${totalComments})` : ""}
-        </h2>
-      </div>
+    <div className="mt-16 border-t pt-12">
+      <h2 className="text-xl font-medium tracking-tight">
+        Comments{totalComments > 0 ? ` (${totalComments})` : ""}
+      </h2>
 
       {!sessionLoaded ? null : !user ? (
-        <div className="mt-6 rounded-lg border p-6 text-center">
+        <div className="mt-6 border p-6 text-center">
           <p className="text-sm text-muted-foreground">Sign in to leave a comment.</p>
           <Button
             size="sm"

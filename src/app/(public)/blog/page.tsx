@@ -13,8 +13,12 @@ export const metadata: Metadata = {
 
 const clean = (title: string) => title.replace(/^["'“”]+|["'“”]+$/g, "").trim()
 
-const readingTime = (content: string) =>
-  Math.max(1, Math.ceil(content.split(/\s+/).length / 200))
+const shortDate = (date: Date) =>
+  date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  })
 
 export default async function BlogPage() {
   const posts = await prisma.post.findMany({
@@ -33,44 +37,29 @@ export default async function BlogPage() {
           No posts yet. Check back soon.
         </p>
       ) : (
-        <ul className="mt-10 flex flex-col border-t">
+        <ul className="mt-12 flex flex-col divide-y">
           {posts.map((post) => (
             <li key={post.id}>
               <Link
                 href={`/blog/${post.slug}`}
-                className="group flex flex-col gap-2 border-b py-5 transition-colors hover:bg-muted/20 sm:flex-row sm:items-baseline sm:gap-6"
+                className="group flex flex-col gap-2 py-8"
               >
-                <span className="shrink-0 font-mono text-xs tabular-nums text-muted-foreground/60 sm:w-28">
-                  {new Date(post.createdAt).toLocaleDateString("en-CA")}
-                </span>
-                <span className="hidden shrink-0 text-xs tabular-nums text-muted-foreground/40 sm:block sm:w-16">
-                  {readingTime(post.content)} min
-                </span>
-
-                <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+                <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6">
                   <h2 className="font-sans font-semibold tracking-tight transition-colors group-hover:text-muted-foreground">
                     {clean(post.title)}
                   </h2>
-                  {post.excerpt && (
-                    <p className="line-clamp-1 text-sm text-muted-foreground">
-                      {post.excerpt}
-                    </p>
-                  )}
-                  {post.tags.length > 0 && (
-                    <p className="flex flex-wrap gap-2 text-[11px] text-muted-foreground/50">
-                      {post.tags.slice(0, 3).map((tag) => (
-                        <span key={tag}>#{tag}</span>
-                      ))}
-                    </p>
-                  )}
+                  <time
+                    dateTime={post.createdAt.toISOString()}
+                    className="shrink-0 font-mono text-xs text-muted-foreground/60"
+                  >
+                    {shortDate(post.createdAt)}
+                  </time>
                 </div>
-
-                <span
-                  className="hidden shrink-0 text-xs text-muted-foreground/30 transition-colors group-hover:text-foreground sm:block"
-                  aria-hidden="true"
-                >
-                  →
-                </span>
+                {post.excerpt && (
+                  <p className="line-clamp-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+                    {post.excerpt}
+                  </p>
+                )}
               </Link>
             </li>
           ))}
