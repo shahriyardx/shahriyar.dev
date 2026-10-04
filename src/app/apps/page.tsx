@@ -11,7 +11,7 @@ import { apps } from "./apps"
 export const metadata: Metadata = {
   title: "Apps",
   description:
-    "Apps I've built and released — a local-only finance app for Android, a new tab extension for Chrome and Firefox, a terminal monitor-brightness controller, and two Python libraries.",
+    "Apps I've built and released — a self-hosted deploy platform, a local-only finance app for Android, a new tab extension for Chrome and Firefox, a terminal monitor-brightness controller, and two Python libraries.",
 }
 
 export default function AppsPage() {

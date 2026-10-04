@@ -14,6 +14,17 @@ export interface AppEntry {
 
 export const apps: AppEntry[] = [
   {
+    slug: "serve",
+    name: "Serve",
+    tagline: "Deploy apps on your own servers",
+    description:
+      "A self-hosted platform for apps, databases and one-click services. Push to deploy, get a domain with HTTPS, and manage many servers from one dashboard.",
+    icon: "/apps/serve/icon.png",
+    accent: "#0A84FF",
+    platforms: ["Linux", "Docker"],
+    repo: "https://github.com/serve-bd/serve",
+  },
+  {
     slug: "finx",
     name: "FinX",
     tagline: "Private, local-only money tracking",
